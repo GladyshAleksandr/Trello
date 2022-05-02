@@ -1,0 +1,103 @@
+/* .app {
+    background-color: orange;
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+
+    .columnWrapper {
+        position: relative;
+        height: 800px;
+        width: 280px;
+        margin: 55px 15px;
+        overflow: hidden;
+
+        .column {
+            position: absolute;
+            background-color: #ebecf0;
+            word-break: break-all;
+            width: 100%;
+            min-height: 80px;
+            border-radius: 3%;
+
+            .columnTitle {
+                font-weight: 600;
+                margin: 15px 20px 15px 20px;
+            }
+
+            .addCardBtn {
+                height: 45px;
+                margin: 10px 20px 15px 20px;
+                color: gray;
+            }
+        }
+    }
+}
+ */
+
+%btnTpl {
+    width: 200px;
+    height: 30px;
+    margin: 10px 20px 20px 20px;
+    border: 0px black solid;
+    border-radius: 3%;
+    display: inline-block;
+}
+
+.app {
+    background-color: orange;
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+
+    .columnWrapper {
+        position: relative;
+        height: 800px;
+        width: 280px;
+        margin: 55px 15px;
+        overflow: hidden;
+
+        .column {
+            position: absolute;
+            background-color: #ebecf0;
+            word-break: break-all;
+            width: 100%;
+            min-height: 80px;
+            border-radius: 3%;
+
+            .columnTitle {
+                font-weight: 600;
+                margin: 15px 20px 15px 20px;
+            }
+            .Wrap {
+                display: flex;
+                flex-direction: column;
+
+                .cardWrapper {
+                    margin: 20px 10px 10px 10px;
+                    background-color: white;
+                    min-height: 60px;
+                    border-radius: 3%;
+
+                    .cardText {
+                        margin: 10px;
+                    }
+                }
+            }
+
+            .addCardBtn {
+                @extend %btnTpl;
+                color: gray;
+            }
+
+            .addCardBtn:hover {
+                @extend %btnTpl;
+                color: white;
+                background-color: rgb(155, 155, 155);
+            }
+        }
+    }
+}
