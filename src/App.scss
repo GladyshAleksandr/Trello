@@ -1,0 +1,45 @@
+.app {
+    background-color: orange;
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+
+    .addColumnWrapper {
+        margin-top: 55px;
+        position: relative;
+
+        .addColumnTextArea {
+            margin: 5px;
+            padding: 10px 10px 40px 10px;
+            width: 240px;
+            border-radius: 3%;
+            border: 0px black solid;
+        }
+        .addColumn {
+            margin: 5px;
+            width: 260px;
+            height: 40px;
+            border-radius: 5%;
+            border: 0px black solid;
+            background-color: rgb(51, 175, 233);
+        }
+
+        .addColumn:hover {
+            width: 260px;
+            height: 40px;
+            border-radius: 5%;
+            border: 0px black solid;
+            background-color: rgb(6, 97, 139);
+            transition: all 0.5s;
+            color: white;
+        }
+
+        .cancelColIcon {
+            position: relative;
+            top: 3px;
+            right: -10px;
+        }
+    }
+}

@@ -1,27 +1,34 @@
-import { useSelector } from 'react-redux';
-import { AppStateType } from '../../../Redux/store/store';
+import React from 'react';
+import { Draggable } from 'react-beautiful-dnd';
 import './card.scss'
 
-function Card() {
+type Propstype =
+    {
+        index: any
+        id: string
+        text: string
+    }
 
-    const columns = useSelector((store: AppStateType) => store.columns)
-    // comment fot git
+const Card: React.FC<Propstype> = ({ id, text, index }) => {
+
+
     return (
-        <div className='Wrap'>
-            {
-                columns.map((obj) => {
-                    return (
-                        <div className="cardWrapper">
-                            <div className="cardText">
-                                {obj.cards}
-
+        <Draggable draggableId={id.toString()} index={index}>
+            {(provided) => (
+                <div ref={provided.innerRef} {...provided.dragHandleProps} {...provided.draggableProps}>
+                    {
+                        text === ''
+                            ? ''
+                            : <div
+                                className="cardWrapper">
+                                <div className="cardText">
+                                    {text}
+                                </div>
                             </div>
-                        </div>
-                    )
-                })
-
-            }
-        </div>
+                    }
+                </div>
+            )}
+        </Draggable>
     );
 }
 

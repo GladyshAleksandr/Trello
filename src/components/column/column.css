@@ -1,0 +1,80 @@
+.columnWrapper .column .addCardBtn, .columnWrapper .column .addCardBtn_active, .columnWrapper .column .addCardBtn_active:hover, .columnWrapper .column .addCardBtn:hover {
+  width: 200px;
+  height: 30px;
+  margin: 10px 20px 20px 20px;
+  border: 0px black solid;
+  border-radius: 3%;
+  display: inline-block;
+}
+
+.test {
+  height: 1000px;
+  width: 600px;
+  background-color: aquamarine;
+}
+
+.columnWrapper {
+  position: relative;
+  height: 100%;
+  width: 280px;
+  margin: 55px 15px;
+  overflow: hidden;
+}
+
+.columnWrapper .column {
+  position: absolute;
+  background-color: #ebecf0;
+  word-break: break-all;
+  width: 100%;
+  min-height: 80px;
+  border-radius: 3%;
+}
+
+.columnWrapper .column .columnTitle {
+  font-weight: 600;
+  margin: 15px 20px 15px 20px;
+}
+
+.columnWrapper .column .addCardDataTextArea {
+  margin: 10px;
+  padding: 10px 10px 40px 10px;
+  width: 240px;
+  border-radius: 3%;
+  border: 0px black solid;
+}
+
+.columnWrapper .column .addCardBtn {
+  color: gray;
+}
+
+.columnWrapper .column .addCardBtn_active {
+  color: silver;
+  background-color: #e23434;
+}
+
+.columnWrapper .column .addCardBtn_active:hover {
+  -webkit-transition: all 0.5s;
+  transition: all 0.5s;
+  color: white;
+  background-color: #af0101;
+}
+
+.columnWrapper .column .cancelIcon {
+  position: absolute;
+  bottom: 26px;
+}
+
+.columnWrapper .column .cancelIcon:hover {
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  bottom: 24px;
+}
+
+.columnWrapper .column .addCardBtn:hover {
+  -webkit-transition: all 0.5s;
+  transition: all 0.5s;
+  color: white;
+  background-color: #9b9b9b;
+}
+/*# sourceMappingURL=column.css.map */
