@@ -1,8 +1,8 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import Card from "./card/card";
 import './column.scss'
 import { CardsType } from "../../Redux/store/store";
-import React, { FormEvent, useState } from "react";
+import React, { useState } from "react";
 import { actions } from "../../Redux/actions/actionsCreators";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 
@@ -38,7 +38,7 @@ const Column: React.FC<PropsType> = ({ id, columnTitle, cards, index }) => {
         <Draggable draggableId={id.toString()} index={index}>
             {(provided) => (
                 <div {...provided.draggableProps} ref={provided.innerRef} key={id} className="columnWrapper">
-                    <div {...provided.dragHandleProps} className="column"> {/*? should i provide handle props here?  */}
+                    <div {...provided.dragHandleProps} className="column">
                         <div className="columnTitle">
                             {columnTitle}
                         </div>

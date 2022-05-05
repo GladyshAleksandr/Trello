@@ -4,20 +4,14 @@ import { applyMiddleware, compose, createStore } from "redux";
 import createSagaMiddleware from "redux-saga"
 import { ADD_COLUMN, ADD_CARD } from "../consts/constants";
 import rootSaga from "../sagas/saga";
+import { cnahgeCardIdIfNeed } from '../utils/utils';
 
-
-function replaceAt(index: number, replacement: string, str: string) {
-    return str.substring(0, index) + replacement + str.substring(index + replacement.length);
-}
-let str = 'sf'
-let f = str.substring(0, 5)
 
 declare global {
     interface Window {
         __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: typeof compose;
     }
-}                                                                       // need to read this
-
+}
 
 export type CardsType =
     {
@@ -74,7 +68,7 @@ const columnsReducer = (state = initialState, action: ActionsType): InitialState
             }
 
         case ADD_CARD:
-            let columnToChange: Array<ColumnsTypes> = state.columns.filter((col) => col.id === action.id)  // TODO need to do utilit
+            let columnToChange: Array<ColumnsTypes> = state.columns.filter((col) => col.id === action.id)
             columnToChange[0].cards.push({ id: `${columnToChange[0].id}_${columnToChange[0].cards.length + 1}`, text: action.text })
             let arr1 = state.columns.filter((col) => col.id !== action.id)
             arr1.push(columnToChange[0])
@@ -88,23 +82,12 @@ const columnsReducer = (state = initialState, action: ActionsType): InitialState
             }
 
         case UPDATE_CARD_POSITION:
-            let arr = state.columns.filter((i) => i.id !== action.obj.id) // TODO need to do utilit
+            let arr = state.columns.filter((i) => i.id !== action.obj.id)
             arr.push(action.obj)
             let arrFinal: Array<ColumnsTypes> = arr.sort(function (a: ColumnsTypes, b: ColumnsTypes) {
                 return a.id - b.id
             })
-
-
-
-            for (let i = 0; i < arrFinal.length; ++i) {
-                for (let j = 0; j < arrFinal[i].cards.length; ++j) {
-                    if (`${j + 1}` !== arrFinal[i].cards[j].id[arrFinal[i].cards[j].id.length - 1]) //rewrites last letter of cards id to cards id
-                    {
-                        arrFinal[i].cards[j].id = replaceAt(2, `${j + 1}`, arrFinal[i].cards[j].id)
-                    }
-                }
-            }
-            console.log(arrFinal)
+            cnahgeCardIdIfNeed(arrFinal, true, true)
 
             return {
                 ...state,
@@ -112,16 +95,7 @@ const columnsReducer = (state = initialState, action: ActionsType): InitialState
             }
 
         case UPDATE_COLUMN_POSITION:
-
-            for (let i = 0; i < action.arr.length; ++i) {
-                for (let j = 0; j < action.arr[i].cards.length; ++j) {
-
-                    if ((action.arr[i].id.toString()) !== action.arr[i].cards[j].id[0]) {
-                        action.arr[i].cards[j].id = replaceAt(0, action.arr[i].id.toString(), action.arr[i].cards[j].id)
-                    }
-                }
-            }
-
+            cnahgeCardIdIfNeed(action.arr, true, false)
             return {
                 ...state,
                 columns: action.arr
@@ -146,7 +120,7 @@ sagaMiddleware.run(rootSaga)
 
 type ReducerType = typeof columnsReducer
 export type AppStateType = ReturnType<ReducerType>
-export type InferActionsTypes<T> = T extends { [keys: string]: (...args: any[]) => infer U } ? U : never // Need to remember
+export type InferActionsTypes<T> = T extends { [keys: string]: (...args: any[]) => infer U } ? U : never
 type ActionsType = InferActionsTypes<typeof actions>
 
 

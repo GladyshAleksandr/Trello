@@ -1,12 +1,10 @@
-import { DndProvider } from 'react-dnd';
 import Column from './components/column/column';
 import './App.scss'
-import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppStateType } from './Redux/store/store';
+import { AppStateType, ColumnsTypes } from './Redux/store/store';
 import { useState } from 'react';
 import { actions } from './Redux/actions/actionsCreators';
-import { DragDropContext, DragDropContextProps, Droppable, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 
 
 const App = () => {
