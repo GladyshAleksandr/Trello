@@ -5,6 +5,7 @@
     position: relative;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 3fr 1fr;
 
     .addColumnWrapper {
         margin-top: 55px;

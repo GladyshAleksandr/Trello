@@ -1,10 +1,8 @@
-import { UPDATE_CARD_POSITION, UPDATE_COLUMN_POSITION } from './../consts/constants';
-import { actions } from './../actions/actionsCreators';
 import { applyMiddleware, compose, createStore } from "redux";
 import createSagaMiddleware from "redux-saga"
-import { ADD_COLUMN, ADD_CARD } from "../consts/constants";
 import rootSaga from "../sagas/saga";
-import { cnahgeCardIdIfNeed } from '../utils/utils';
+import { UnionOfActionsCreatorsType } from '../types/actionsCreatorsTypes';
+import { ActionTypes } from "../consts/constants";
 
 
 declare global {
@@ -13,93 +11,172 @@ declare global {
     }
 }
 
-export type CardsType =
-    {
-        id: string
-        text: string
-    }
 
-export type ColumnsTypes =
-    {
-        id: number
-        columnTitle: string
-        cards: Array<CardsType>
-    }
 
-type InitialStateType = typeof initialState
-
+export type InitialStateType = typeof initialState
 
 
 const initialState = {
     columns: [
         {
-            id: 1, columnTitle: 'Need to do', cards: [
-                { id: '1_1', text: 'I need to do mini Trello' },
-                { id: '1_2', text: 'I need to do' },
-                { id: '1_3', text: 'это текст-"рыба", часто используемый в печати и вэб-дизайне. ' }
+            id: 1, columnId: 1, columnTitle: 'Need to do', cards: [{ id: 100, text: 'Some text', columnId: 1, order: 1 },
+            { id: 101, text: 'Lorem ipsum', columnId: 1, order: 2 },
+            { id: 102, text: 'text...', columnId: 1, order: 3 },
+            { id: 103, text: 'Task 1', columnId: 1, order: 4 },
+            { id: 104, text: 'Task 2', columnId: 1, order: 5 },
             ]
         },
         {
-            id: 2, columnTitle: 'In process', cards: [
-                { id: '2_1', text: 'Давно выяснено, что при оценке дизайна и композиции читаемый текст мешает сосредоточиться.' },
-                { id: '2_2', text: 'Lorem Ipsum используют потому, что тот обеспечивает более или менее стандартное заполнение шаблона' }
-            ]
+            id: 2, columnId: 2, columnTitle: 'In process', cards: [{ id: 105, text: 'Igor', columnId: 1, order: 1 },
+            { id: 106, text: 'Task', columnId: 2, order: 2 }]
         },
         {
-            id: 3, columnTitle: 'Done', cards: [{ id: '3_1', text: '' }]
-        }
+            id: 3, columnId: 3, columnTitle: 'Done', cards: [{ id: 107, text: 'Important data', columnId: 3, order: 1 }]
+        },
+        {
+            id: 4, columnId: 4, columnTitle: 'Test 4', cards: []
+        },
+        {
+            id: 5, columnId: 5, columnTitle: 'Test 5', cards: []
+        },
+
     ] as Array<ColumnsTypes>
 }
 
 
 const columnsReducer = (state = initialState, action: ActionsType): InitialStateType => {
     switch (action.type) {
-        case ADD_COLUMN:
 
-            let newColumn = {
+        case ActionTypes.GET_DATA_FROM_STORAGE_SUCCESS:
+            return {
+                ...state,
+                columns: action.payload.columns
+            }
+
+        case ActionTypes.GET_DATA_FROM_STORAGE_FAILURE:
+            console.error(ActionTypes.GET_DATA_FROM_STORAGE_FAILURE)
+
+            return {
+                ...state
+            }
+
+        case ActionTypes.ADD_COLUMN_SUCCESS:
+            const newCol = {
                 id: state.columns.length + 1,
-                columnTitle: action.title,
-                cards: [{ id: `${(state.columns.length + 1)}_0`, text: '' }]
+                columnId: state.columns.length + 1,
+                columnTitle: action.payload.columnTitle,
+                cards: []
             }
+            return {
+                ...state,
+                columns: [...state.columns, newCol]
+            }
+
+        case ActionTypes.ADD_COLUMN_FAILURE:
+            console.error(ActionTypes.ADD_COLUMN_FAILURE)
+
+            return {
+                ...state
+            }
+
+        case ActionTypes.ADD_CARD_SUCCESS:
+            return {
+                ...state,
+                /*                 ...state.columns[action.payload.card.columnId].cards = [...state.columns[action.payload.card.columnId].cards, action.payload.card],
+                 */
+                columns: [...state.columns.map((column) => {
+                    if (column.columnId !== action.payload.card.columnId) return column
+                    else {
+                        column.cards.push(action.payload.card)
+                        return column
+                    }
+                })]
+            }
+        case ActionTypes.ADD_CARD_FAILURE:
+            console.error(ActionTypes.ADD_CARD_FAILURE)
+
+            return {
+                ...state
+            }
+
+        case ActionTypes.UPDATE_CARD_POSITION_SUCCESS:
+            console.log(action.payload.columns)
 
             return {
                 ...state,
-                columns: [...state.columns, newColumn]
+                columns: action.payload.columns
             }
 
-        case ADD_CARD:
-            let columnToChange: Array<ColumnsTypes> = state.columns.filter((col) => col.id === action.id)
-            columnToChange[0].cards.push({ id: `${columnToChange[0].id}_${columnToChange[0].cards.length + 1}`, text: action.text })
-            let arr1 = state.columns.filter((col) => col.id !== action.id)
-            arr1.push(columnToChange[0])
-            let filteredArr: Array<ColumnsTypes> = arr1.sort(function (a: ColumnsTypes, b: ColumnsTypes) {
-                return a.id - b.id
-            })
+        case ActionTypes.UPDATE_CARD_POSITION_FAILURE:
+            console.error(ActionTypes.UPDATE_CARD_POSITION_FAILURE)
+
+            return {
+                ...state
+            }
+
+        case ActionTypes.UPDATE_COLUMN_POSITION_SUCCESS:
+            return {
+                ...state,
+                columns: action.payload.columns
+            }
+
+        case ActionTypes.UPDATE_COLUMN_POSITION_FAILURE:
+            console.error(ActionTypes.UPDATE_COLUMN_POSITION_FAILURE)
+            return {
+                ...state
+            }
+
+        case ActionTypes.DELETE_COLUMN_SUCCESS:
 
             return {
                 ...state,
-                columns: filteredArr
+                columns: action.payload.columns
             }
 
-        case UPDATE_CARD_POSITION:
-            let arr = state.columns.filter((i) => i.id !== action.obj.id)
-            arr.push(action.obj)
-            let arrFinal: Array<ColumnsTypes> = arr.sort(function (a: ColumnsTypes, b: ColumnsTypes) {
-                return a.id - b.id
-            })
-            cnahgeCardIdIfNeed(arrFinal, true, true)
+        case ActionTypes.DELETE_COLUMN_FAILURE:
+            console.error(ActionTypes.DELETE_COLUMN_FAILURE)
+            return {
+                ...state
+            }
 
+        case ActionTypes.DELETE_CARD_SUCESS:
+            console.log(action.payload.columns)
             return {
                 ...state,
-                columns: arrFinal
+                columns: action.payload.columns
             }
 
-        case UPDATE_COLUMN_POSITION:
-            cnahgeCardIdIfNeed(action.arr, true, false)
+        case ActionTypes.DELETE_CARD_FAILURE:
+            console.error(ActionTypes.DELETE_CARD_FAILURE)
+            return {
+                ...state
+            }
+
+        case ActionTypes.RENAME_CARD_SUCCESS:
             return {
                 ...state,
-                columns: action.arr
+                columns: [...state.columns.filter((column) => column.columnId === action.payload.columnId ? column.cards.map((card) => card.order === action.payload.order ? card.text = action.payload.text : card) : column)]
             }
+
+        case ActionTypes.RENAME_CARD_FAILURE:
+            console.error(ActionTypes.RENAME_CARD_FAILURE)
+            return {
+                ...state
+            }
+
+        case ActionTypes.RENAME_COLUMN_SUCCESS:
+            return {
+                ...state,
+                columns: [...state.columns.filter((column) => column.columnId === action.payload.columnId ? column.columnTitle = action.payload.columnTitle : column)]
+            }
+
+        case ActionTypes.RENAME_COLUMN_FAILURE:
+            console.error(ActionTypes.RENAME_COLUMN_FAILURE)
+
+            return {
+                ...state
+            }
+
         default:
             return state
     }
@@ -120,8 +197,11 @@ sagaMiddleware.run(rootSaga)
 
 type ReducerType = typeof columnsReducer
 export type AppStateType = ReturnType<ReducerType>
-export type InferActionsTypes<T> = T extends { [keys: string]: (...args: any[]) => infer U } ? U : never
-type ActionsType = InferActionsTypes<typeof actions>
+/* export type InferActionsTypes<T> = T extends { [keys: string]: (...args: any[]) => infer U } ? U : never
+ */
+
+
+type ActionsType = UnionOfActionsCreatorsType
 
 
 export default store

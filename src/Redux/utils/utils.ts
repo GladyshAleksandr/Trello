@@ -1,44 +1,108 @@
-import { ColumnsTypes } from './../store/store';
 export function replaceAt(index: number, replacement: string, str: string) {
     return str.substring(0, index) + replacement + str.substring(index + replacement.length);
 }
 
-export function cnahgeCardIdIfNeed(arr: Array<ColumnsTypes>, firstLetterCheck: boolean, lastLetterCheck: boolean) {
+export function convertDataFromDbToColumnsTypeData(data: ResponseGetDataFromDBType) {
 
-    if (firstLetterCheck === true && lastLetterCheck === true) {
-        for (let i = 0; i < arr.length; ++i) {
-            for (let j = 0; j < arr[i].cards.length; ++j) {
-                if (`${j + 1}` !== arr[i].cards[j].id[arr[i].cards[j].id.length - 1]) //rewrites last letter of cards id to cards id
-                {
-                    arr[i].cards[j].id = replaceAt(2, `${j + 1}`, arr[i].cards[j].id)
+    let objCols: Array<columnsGetType> = []
+    objCols = data.columns
+    let arrOfCards: Array<cardsGetType> = data.cards
+
+    let obj: any = objCols.map((current: any) => {
+        let ColumnsTypes = {
+            id: undefined,
+            columnId: undefined,
+            columnTitle: undefined,
+            cards: []
+        }    /*  = Object.assign({}, current) */
+        ColumnsTypes.id = current.id
+        ColumnsTypes.columnId = current.columnId
+        ColumnsTypes.columnTitle = current.columnTitle
+        ColumnsTypes.cards = []
+        return ColumnsTypes
+    })
+    /* debugger */
+    if (arrOfCards.length > 0) {
+        for (let i = 0; i < obj.length; ++i) {
+            for (let j = 0; j < arrOfCards.length; ++j) {
+                let cardsType = {
+                    id: 0,
+                    text: '',
+                    columnId: 0,
+                    order: 0
                 }
-                if ((arr[i].id.toString()) !== arr[i].cards[j].id[0]) {  //rewrites first letter of cards id to column id
-                    arr[i].cards[j].id = replaceAt(0, arr[i].id.toString(), arr[i].cards[j].id)
+                cardsType.id = arrOfCards[j].id
+                cardsType.text = arrOfCards[j].text
+                cardsType.columnId = arrOfCards[j].columnId
+                cardsType.order = arrOfCards[j].orders
+
+                if (obj[i].columnId === cardsType.columnId) {
+                    /* debugger */
+                    obj[i].cards.push(cardsType)
                 }
+                else continue
+
             }
         }
-        return
     }
+    obj.map((column: ColumnsTypes) => {
 
-    if (firstLetterCheck === true) {
-        for (let i = 0; i < arr.length; ++i) {
-            for (let j = 0; j < arr[i].cards.length; ++j) {
-                if ((arr[i].id.toString()) !== arr[i].cards[j].id[0]) {  //rewrites first letter of cards id to column id
-                    arr[i].cards[j].id = replaceAt(0, arr[i].id.toString(), arr[i].cards[j].id)
-                }
-            }
-        }
-    }
+        column.cards.sort((a, b,) => a.order - b.order)
+        return column
+    })
+    obj.sort((a: ColumnsTypes, b: ColumnsTypes) => a.columnId - b.columnId)
+    data = obj
+    return data
+}
 
-    if (lastLetterCheck === true) {
-        for (let i = 0; i < arr.length; ++i) {
-            for (let j = 0; j < arr[i].cards.length; ++j) {
-                if (`${j + 1}` !== arr[i].cards[j].id[arr[i].cards[j].id.length - 1]) //rewrites last letter of cards id to cards id
-                {
-                    arr[i].cards[j].id = replaceAt(2, `${j + 1}`, arr[i].cards[j].id)
-                }
-            }
-        }
-    }
+export function changeColumnAndCardIdToIndexOfColumn(tmpAr: Array<ColumnsTypes>) {
+    tmpAr.map((col, index) => {
+        col.columnId = index + 1
+        col.cards.forEach((card, index) => {
+            card.columnId = col.columnId
+            return card
+        })
+        return col
+    })
+}
 
+export function changeCardOrderToIndexOfColumn(tmpAr: Array<ColumnsTypes>) {
+    tmpAr.map((col, index) => {
+        col.cards.forEach((card, index) => {
+            card.order = index + 1
+            return card
+        })
+        return col
+    })
+}
+export const getIdForNewCard = (columns: Array<ColumnsTypes>) => {
+    let res
+    res = columns.map((col) => {
+        return col.cards.length
+    })
+    let result: any = 0
+    res.forEach(element => {
+        result += element
+    });
+    return result + 100
+    /* 
+        let biggestId = 0
+        columns.map((col) => {
+            col.cards.map((card) => {
+                if (card.id > biggestId) biggestId = card.id
+    
+            })
+            return col
+        })
+        return biggestId */
+}
+
+export function getBiggestColumnIdFromStore(columns: Array<ColumnsTypes>) {
+    let biggestId = 0
+    columns.map((col) => {
+        if (col.id > biggestId) biggestId = col.id
+        return col
+    })
+    debugger
+    return biggestId
 }
