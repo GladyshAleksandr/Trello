@@ -1,7 +1,7 @@
-type columnsGetType = {
+type ColumnsGetType = {
     id: number, columnTitle: string, columnId: number
 }
-type cardsGetType = {
+type CardsGetType = {
     id: number, text: string, columnId: number, orders: number
 }
 type ResponseGetDataFromDBType = {
@@ -24,77 +24,80 @@ type ColumnsTypes =
         cards: Array<CardsType>
     }
 
-type failureType = {
+type FailureType = {
     err: Error
 }
 
+namespace Start_Success_Type {
 
-type getAllDataSuccessType = {
-    columns: Array<ColumnsTypes>
+
+    type GetAllDataSuccessType = {
+        columns: Array<ColumnsTypes>
+    }
+
+    type AddColumnStartType = {
+        id: number
+        columnTitle: string
+        columnId: number
+    }
+    type AddColumnSuccessType = {
+        columnTitle: string
+    }
+
+
+
+    type AddCardStartType = {
+        id: number
+        text: string
+        columnId: number
+        order: number
+    }
+
+    type AddCardSuccessType = {
+        card: CardsType
+    }
+
+
+    type UpdateCardPositionStartType = {
+        columns: Array<ColumnsTypes>
+    }
+    type UpdateCardPositionSuccessType = UpdateCardPositionStartType
+
+
+
+    type UpdateColumnPositionStartType = {
+        columns: Array<ColumnsTypes>
+    }
+    type UpdateColumnPositionSuccessType = UpdateColumnPositionStartType
+
+
+
+    type DeleteColumnStartType = {
+        columns: Array<ColumnsTypes>
+    }
+    type DeleteColumnSuccessType = DeleteColumnStartType
+
+
+
+    type DeleteCardStartType = {
+        columns: Array<ColumnsTypes>
+    }
+    type DeleteCardSuccessType = DeleteCardStartType
+
+
+
+    type RenameCardStartType = {
+        text: string
+        columnId: number
+        order: number
+    }
+    type RenameCardSuccessType = RenameCardStartType
+
+
+
+    type RenameColumnStartType = {
+        columnTitle: string
+        columnId: number
+    }
+    type RenameColumnSuccessType = RenameColumnStartType
 }
-
-type addColumnStartType = {
-    id: number
-    columnTitle: string
-    columnId: number
-}
-type addColumnSuccessType = {
-    columnTitle: string
-}
-
-
-
-type addCardStartType = {
-    id: number
-    text: string
-    columnId: number
-    order: number
-}
-type addCardSuccessType = {
-    card: CardsType
-}
-
-
-
-type updateCardPositionStartType = {
-    columns: Array<ColumnsTypes>
-}
-type updateCardPositionSuccessType = updateCardPositionStartType
-
-
-
-type updateColumnPositionStartType = {
-    columns: Array<ColumnsTypes>
-}
-type updateColumnPositionSuccessType = updateColumnPositionStartType
-
-
-
-type deleteColumnStartType = {
-    columns: Array<ColumnsTypes>
-}
-type deleteColumnSuccessType = deleteColumnStartType
-
-
-
-type deleteCardStartType = {
-    columns: Array<ColumnsTypes>
-}
-type deleteCardSuccessType = deleteCardStartType
-
-
-
-type renameCardStartType = {
-    text: string
-    columnId: number
-    order: number
-}
-type renameCardSuccessType = renameCardStartType
-
-
-
-type renameColumnStartType = {
-    columnTitle: string
-    columnId: number
-}
-type renameColumnSuccessType = renameColumnStartType

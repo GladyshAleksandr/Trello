@@ -1,31 +1,32 @@
+import { START_CARD_ID } from "../consts/constants";
+
 export function replaceAt(index: number, replacement: string, str: string) {
     return str.substring(0, index) + replacement + str.substring(index + replacement.length);
 }
 
 export function convertDataFromDbToColumnsTypeData(data: ResponseGetDataFromDBType) {
 
-    let objCols: Array<columnsGetType> = []
-    objCols = data.columns
-    let arrOfCards: Array<cardsGetType> = data.cards
+    const objCols: Array<ColumnsGetType> = data.columns
+    const arrOfCards: Array<CardsGetType> = data.cards
 
-    let obj: any = objCols.map((current: any) => {
-        let ColumnsTypes = {
+    const obj: any = objCols.map((current: any) => {
+        const ColumnsTypes = {
             id: undefined,
             columnId: undefined,
             columnTitle: undefined,
             cards: []
-        }    /*  = Object.assign({}, current) */
+        }
         ColumnsTypes.id = current.id
         ColumnsTypes.columnId = current.columnId
         ColumnsTypes.columnTitle = current.columnTitle
         ColumnsTypes.cards = []
         return ColumnsTypes
     })
-    /* debugger */
+
     if (arrOfCards.length > 0) {
         for (let i = 0; i < obj.length; ++i) {
             for (let j = 0; j < arrOfCards.length; ++j) {
-                let cardsType = {
+                const cardsType = {
                     id: 0,
                     text: '',
                     columnId: 0,
@@ -37,72 +38,40 @@ export function convertDataFromDbToColumnsTypeData(data: ResponseGetDataFromDBTy
                 cardsType.order = arrOfCards[j].orders
 
                 if (obj[i].columnId === cardsType.columnId) {
-                    /* debugger */
                     obj[i].cards.push(cardsType)
                 }
-                else continue
-
             }
         }
     }
-    obj.map((column: ColumnsTypes) => {
-
+    const obToReturn = obj.map((column: ColumnsTypes) => {
         column.cards.sort((a, b,) => a.order - b.order)
         return column
     })
-    obj.sort((a: ColumnsTypes, b: ColumnsTypes) => a.columnId - b.columnId)
-    data = obj
-    return data
+        .sort((a: ColumnsTypes, b: ColumnsTypes) => a.columnId - b.columnId)
+    return obToReturn
 }
 
 export function changeColumnAndCardIdToIndexOfColumn(tmpAr: Array<ColumnsTypes>) {
-    tmpAr.map((col, index) => {
-        col.columnId = index + 1
-        col.cards.forEach((card, index) => {
-            card.columnId = col.columnId
-            return card
-        })
-        return col
+    const arrToReturn = tmpAr.map((col, index) => {
+        return {
+            ...col,
+            columnId: index + 1,
+            cards: col.cards.map((card) => ({ ...card, columnId: index + 1 }))
+        }
     })
+    return arrToReturn
 }
 
 export function changeCardOrderToIndexOfColumn(tmpAr: Array<ColumnsTypes>) {
-    tmpAr.map((col, index) => {
-        col.cards.forEach((card, index) => {
-            card.order = index + 1
-            return card
-        })
-        return col
-    })
+    const arrToReturn = tmpAr.map((col) => ({ ...col, cards: col.cards.map((card, index) => ({ ...card, order: index + 1 })) }))
+    return arrToReturn
 }
 export const getIdForNewCard = (columns: Array<ColumnsTypes>) => {
-    let res
-    res = columns.map((col) => {
-        return col.cards.length
-    })
-    let result: any = 0
-    res.forEach(element => {
-        result += element
-    });
-    return result + 100
-    /* 
-        let biggestId = 0
-        columns.map((col) => {
-            col.cards.map((card) => {
-                if (card.id > biggestId) biggestId = card.id
-    
-            })
-            return col
-        })
-        return biggestId */
+    const result = columns.reduce((prevCol, currentCol) => { return prevCol + currentCol.cards.length }, 0)
+    return result + START_CARD_ID
 }
 
 export function getBiggestColumnIdFromStore(columns: Array<ColumnsTypes>) {
-    let biggestId = 0
-    columns.map((col) => {
-        if (col.id > biggestId) biggestId = col.id
-        return col
-    })
-    debugger
+    const biggestId = Math.max(...columns.map((col) => col.id))
     return biggestId
 }

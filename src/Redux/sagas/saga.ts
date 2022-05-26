@@ -1,21 +1,21 @@
-import { addCardActionCreatorStartType, deleteCardActionCreatorStartType, deleteColumnActionCreatorStartType, renameCardActionCreatorStartType, renameColumnActionCreatorStartType, updateColumnPositionActionCreatorStartType, updateCardPositionActionCreatorStartType, addColumnActionCreatorStartType } from '../types/actionsCreatorsTypes';
 import { actions } from './../actions/actionsCreators';
 import { api } from '../service/api';
 import { call, put, takeEvery } from 'redux-saga/effects'
 import { ActionTypes } from '../consts/constants';
 import { AxiosResponse } from 'axios';
 import { convertDataFromDbToColumnsTypeData } from '../utils/utils';
+import { AddCardActionCreatorStartType, AddColumnActionCreatorStartType, DeleteCardActionCreatorStartType, DeleteColumnActionCreatorStartType, RenameCardActionCreatorStartType, RenameColumnActionCreatorStartType, UpdateCardPositionActionCreatorStartType, UpdateColumnPositionActionCreatorStartType } from 'Redux/types/actionsCreatorsTypes';
 
 async function getDataFromDB() {
-    const req: AxiosResponse = await api.getDataFromStore()
-    return req
+    const res: AxiosResponse = await api.getDataFromStore()
+    return res
 }
 
 function* workerGetDataFromStorage() {
     try {
-        const req: AxiosResponse = yield call(getDataFromDB)
-        let data = convertDataFromDbToColumnsTypeData(req.data)
-        yield put(actions.getDataFromStorageActionCreatorSuccess(data as unknown as Array<ColumnsTypes>))
+        const res: AxiosResponse = yield call(getDataFromDB)
+        const data: Array<ColumnsTypes> = convertDataFromDbToColumnsTypeData(res.data)
+        yield put(actions.getDataFromStorageActionCreatorSuccess(data))
     } catch (err) {
         yield put(actions.getDataFromStorageActionCreatorFailure(err as Error))
     }
@@ -24,12 +24,12 @@ function* workerGetDataFromStorage() {
 
 
 
-async function addCardToDB({ id, text, columnId, order }: addCardStartType) {
-    const req: AxiosResponse = await api.postAddCard(id, text, columnId, order)
-    return req.data
+async function addCardToDB({ id, text, columnId, order }: Start_Success_Type.AddCardStartType) {
+    const res: AxiosResponse = await api.postAddCard(id, text, columnId, order)
+    return res.data
 }
 
-function* workerSagaAddCard({ payload: { id, text, columnId, order } }: addCardActionCreatorStartType) {
+function* workerSagaAddCard({ payload: { id, text, columnId, order } }: AddCardActionCreatorStartType) {
     try {
         const data: CardsType = yield call(addCardToDB, { id, text, columnId, order })
         yield put(actions.addCardActionCreatorSuccess(data))
@@ -40,12 +40,12 @@ function* workerSagaAddCard({ payload: { id, text, columnId, order } }: addCardA
 
 
 
-async function addColumnToDB({ columnTitle, columnId }: addColumnStartType) {
-    const req: AxiosResponse = await api.postAddColumn(columnTitle, columnId)
-    return req
+async function addColumnToDB({ columnTitle, columnId }: Start_Success_Type.AddColumnStartType) {
+    const res: AxiosResponse = await api.postAddColumn(columnTitle, columnId)
+    return res
 }
 
-function* workerSagaAddColumn({ payload: { id, columnTitle, columnId } }: addColumnActionCreatorStartType) {
+function* workerSagaAddColumn({ payload: { id, columnTitle, columnId } }: AddColumnActionCreatorStartType) {
     try {
         yield call(addColumnToDB, { id, columnTitle, columnId })
         yield put(actions.addColumnActionCreatorSuccess(columnTitle))
@@ -57,13 +57,13 @@ function* workerSagaAddColumn({ payload: { id, columnTitle, columnId } }: addCol
 
 
 
-async function moveColumnToDB({ columns }: updateColumnPositionStartType) {
-    let req: AxiosResponse = await api.postMoveColumn(columns)
-    return req
+async function moveColumnToDB({ columns }: Start_Success_Type.UpdateColumnPositionStartType) {
+    let res: AxiosResponse = await api.postMoveColumn(columns)
+    return res
 
 }
 
-function* workerSagamoveColumn({ payload: { columns } }: updateColumnPositionActionCreatorStartType) {
+function* workerSagamoveColumn({ payload: { columns } }: UpdateColumnPositionActionCreatorStartType) {
     try {
         yield call(moveColumnToDB, { columns })
         yield put(actions.updateColumnPositionActionCreatorSuccess(columns))
@@ -75,13 +75,13 @@ function* workerSagamoveColumn({ payload: { columns } }: updateColumnPositionAct
 
 
 
-async function moveCardToDB({ columns }: updateCardPositionStartType) {
-    const req: AxiosResponse = await api.postMoveCard(columns)
-    return req
+async function moveCardToDB({ columns }: Start_Success_Type.UpdateCardPositionStartType) {
+    const res: AxiosResponse = await api.postMoveCard(columns)
+    return res
 
 }
 
-function* workerSagaMoveCard({ payload: { columns } }: updateCardPositionActionCreatorStartType) {
+function* workerSagaMoveCard({ payload: { columns } }: UpdateCardPositionActionCreatorStartType) {
     try {
         yield call(moveCardToDB, { columns })
         yield put(actions.updateCardPositionActionCreatorSuccess(columns))
@@ -92,12 +92,12 @@ function* workerSagaMoveCard({ payload: { columns } }: updateCardPositionActionC
 
 
 
-async function deleteColumnToDB({ columns }: deleteColumnStartType) {
-    const req: AxiosResponse = await api.deleteColumn(columns)
-    return req
+async function deleteColumnToDB({ columns }: Start_Success_Type.DeleteColumnStartType) {
+    const res: AxiosResponse = await api.deleteColumn(columns)
+    return res
 }
 
-function* workerSagaDeleteColumn({ payload: { columns } }: deleteColumnActionCreatorStartType) {
+function* workerSagaDeleteColumn({ payload: { columns } }: DeleteColumnActionCreatorStartType) {
     try {
         yield call(deleteColumnToDB, { columns })
         yield put(actions.deleteColumnActionCreatorSuccess(columns))
@@ -108,12 +108,12 @@ function* workerSagaDeleteColumn({ payload: { columns } }: deleteColumnActionCre
 
 
 
-async function deleteCardToDB({ columns }: deleteCardStartType) {
-    const req: AxiosResponse = await api.deleteCard(columns)
-    return req
+async function deleteCardToDB({ columns }: Start_Success_Type.DeleteCardStartType) {
+    const res: AxiosResponse = await api.deleteCard(columns)
+    return res
 }
 
-function* workerSagaDeleteCard({ payload: { columns } }: deleteCardActionCreatorStartType) {
+function* workerSagaDeleteCard({ payload: { columns } }: DeleteCardActionCreatorStartType) {
     try {
         yield call(deleteCardToDB, { columns })
         yield put(actions.deleteCardActionCreatorSuccess(columns))
@@ -124,12 +124,12 @@ function* workerSagaDeleteCard({ payload: { columns } }: deleteCardActionCreator
 
 
 
-async function renameColumnToDB({ columnTitle, columnId }: renameColumnStartType) {
-    const req: AxiosResponse = await api.postRenameColumn(columnTitle, columnId)
-    return req
+async function renameColumnToDB({ columnTitle, columnId }: Start_Success_Type.RenameColumnStartType) {
+    const res: AxiosResponse = await api.postRenameColumn(columnTitle, columnId)
+    return res
 }
 
-function* workerSagaRenameColumn({ payload: { columnTitle, columnId } }: renameColumnActionCreatorStartType) {
+function* workerSagaRenameColumn({ payload: { columnTitle, columnId } }: RenameColumnActionCreatorStartType) {
     try {
         yield call(renameColumnToDB, { columnTitle, columnId })
         yield put(actions.renameColumnActionCreatorSuccess(columnTitle, columnId))
@@ -140,12 +140,12 @@ function* workerSagaRenameColumn({ payload: { columnTitle, columnId } }: renameC
 
 
 
-async function renameCardToDB({ text, columnId, order }: renameCardStartType) {
-    const req: AxiosResponse = await api.postRenameCard(text, columnId, order)
-    return req
+async function renameCardToDB({ text, columnId, order }: Start_Success_Type.RenameCardStartType) {
+    const res: AxiosResponse = await api.postRenameCard(text, columnId, order)
+    return res
 }
 
-function* workerSagaRenameCard({ payload: { text, columnId, order } }: renameCardActionCreatorStartType) {
+function* workerSagaRenameCard({ payload: { text, columnId, order } }: RenameCardActionCreatorStartType) {
     try {
         yield call(renameCardToDB, { text, columnId, order })
         yield put(actions.renameCardActionCreatorSuccess(text, columnId, order))

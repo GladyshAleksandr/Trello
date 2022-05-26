@@ -1,193 +1,193 @@
 import { ActionTypes } from "../consts/constants"
 
-export type getDataFromStorageActionCreatorStartType = {
+export type GetDataFromStorageActionCreatorStartType = {
     type: ActionTypes.GET_DATA_FROM_STORAGE_START
 }
-export type getDataFromStorageActionCreatorSuccessType = {
+export type GetDataFromStorageActionCreatorSuccessType = {
     type: ActionTypes.GET_DATA_FROM_STORAGE_SUCCESS
-    payload: getAllDataSuccessType
+    payload: Start_Success_Type.GetAllDataSuccessType
 }
-export type getDataFromStorageActionCreatorFailureType = {
+export type GetDataFromStorageActionCreatorFailureType = {
     type: ActionTypes.GET_DATA_FROM_STORAGE_FAILURE
-    payload: failureType
+    payload: FailureType
 }
 
 
 
-export type addColumnActionCreatorStartType = {
+export type AddColumnActionCreatorStartType = {
     type: ActionTypes.ADD_COLUMN_START
-    payload: addColumnStartType
+    payload: Start_Success_Type.AddColumnStartType
 }
-export type addColumnActionCreatorSuccessType = {
+export type AddColumnActionCreatorSuccessType = {
     type: ActionTypes.ADD_COLUMN_SUCCESS
-    payload: addColumnSuccessType
+    payload: Start_Success_Type.AddColumnSuccessType
 }
-export type addColumnActionCreatorFailureType = {
+export type AddColumnActionCreatorFailureType = {
     type: ActionTypes.ADD_COLUMN_FAILURE
-    payload: failureType
+    payload: FailureType
 }
 
 
 
-export type addCardActionCreatorStartType = {
+export type AddCardActionCreatorStartType = {
     type: ActionTypes.ADD_CARD_START
-    payload: addCardStartType
+    payload: Start_Success_Type.AddCardStartType
 }
-export type addCardActionCreatorSuccessType = {
+export type AddCardActionCreatorSuccessType = {
     type: ActionTypes.ADD_CARD_SUCCESS
-    payload: addCardSuccessType
+    payload: Start_Success_Type.AddCardSuccessType
 }
-export type addCardActionCreatorFailureType = {
+export type AddCardActionCreatorFailureType = {
     type: ActionTypes.ADD_CARD_FAILURE
-    payload: failureType
+    payload: FailureType
 }
 
 
 
-export type updateCardPositionActionCreatorStartType = {
+export type UpdateCardPositionActionCreatorStartType = {
     type: ActionTypes.UPDATE_CARD_POSITION_START
-    payload: updateCardPositionStartType
+    payload: Start_Success_Type.UpdateCardPositionStartType
 }
-export type updateCardPositionActionCreatorSuccessType = {
+export type UpdateCardPositionActionCreatorSuccessType = {
     type: ActionTypes.UPDATE_CARD_POSITION_SUCCESS
-    payload: updateCardPositionSuccessType
+    payload: Start_Success_Type.UpdateCardPositionSuccessType
 }
-export type updateCardPositionActionCreatorFailureType = {
+export type UpdateCardPositionActionCreatorFailureType = {
     type: ActionTypes.UPDATE_CARD_POSITION_FAILURE
-    payload: failureType
+    payload: FailureType
 }
 
 
 
-export type updateColumnPositionActionCreatorStartType = {
+export type UpdateColumnPositionActionCreatorStartType = {
     type: ActionTypes.UPDATE_COLUMN_POSITION_START
-    payload: updateColumnPositionStartType
+    payload: Start_Success_Type.UpdateColumnPositionStartType
 }
-export type updateColumnPositionActionCreatorSuccessType = {
+export type UpdateColumnPositionActionCreatorSuccessType = {
     type: ActionTypes.UPDATE_COLUMN_POSITION_SUCCESS
-    payload: updateColumnPositionSuccessType
+    payload: Start_Success_Type.UpdateColumnPositionSuccessType
 }
-export type updateColumnPositionActionCreatorFailureType = {
+export type UpdateColumnPositionActionCreatorFailureType = {
     type: ActionTypes.UPDATE_COLUMN_POSITION_FAILURE
-    payload: failureType
+    payload: FailureType
 }
 
 
-export type deleteColumnActionCreatorStartType = {
+export type DeleteColumnActionCreatorStartType = {
     type: ActionTypes.DELETE_COLUMN_START,
-    payload: deleteColumnStartType
+    payload: Start_Success_Type.DeleteColumnStartType
 }
-export type deleteColumnActionCreatorSuccessType = {
+export type DeleteColumnActionCreatorSuccessType = {
     type: ActionTypes.DELETE_COLUMN_SUCCESS,
-    payload: deleteColumnSuccessType
+    payload: Start_Success_Type.DeleteColumnSuccessType
 }
-export type deleteColumnActionCreatorFailureType = {
+export type DeleteColumnActionCreatorFailureType = {
     type: ActionTypes.DELETE_COLUMN_FAILURE,
-    payload: failureType
+    payload: FailureType
 }
 
 
 
-export type deleteCardActionCreatorStartType = {
+export type DeleteCardActionCreatorStartType = {
     type: ActionTypes.DELETE_CARD_START
-    payload: deleteCardStartType
+    payload: Start_Success_Type.DeleteCardStartType
 }
-export type deleteCardActionCreatorSuccessType = {
+export type DeleteCardActionCreatorSuccessType = {
     type: ActionTypes.DELETE_CARD_SUCESS
-    payload: deleteCardSuccessType
+    payload: Start_Success_Type.DeleteCardSuccessType
 }
-export type deleteCardActionCreatorFailureType = {
+export type DeleteCardActionCreatorFailureType = {
     type: ActionTypes.DELETE_CARD_FAILURE
-    payload: failureType
+    payload: FailureType
 
 }
 
 
 
-export type renameCardActionCreatorStartType = {
+export type RenameCardActionCreatorStartType = {
     type: ActionTypes.RENAME_CARD_START
-    payload: renameCardStartType
+    payload: Start_Success_Type.RenameCardStartType
 }
-export type renameCardActionCreatorSuccessType = {
+export type RenameCardActionCreatorSuccessType = {
     type: ActionTypes.RENAME_CARD_SUCCESS
-    payload: renameCardSuccessType
+    payload: Start_Success_Type.RenameCardSuccessType
 }
-export type renameCardActionCreatorFailureType = {
+export type RenameCardActionCreatorFailureType = {
     type: ActionTypes.RENAME_CARD_FAILURE
-    payload: failureType
+    payload: FailureType
 }
 
 
 
-export type renameColumnActionCreatorStartType = {
+export type RenameColumnActionCreatorStartType = {
     type: ActionTypes.RENAME_COLUMN_START,
-    payload: renameColumnStartType
+    payload: Start_Success_Type.RenameColumnStartType
 }
-export type renameColumnActionCreatorSuccessType = {
+export type RenameColumnActionCreatorSuccessType = {
     type: ActionTypes.RENAME_COLUMN_SUCCESS,
-    payload: renameColumnSuccessType
+    payload: Start_Success_Type.RenameColumnSuccessType
 }
 
-export type renameColumnActionCreatorFailureType = {
+export type RenameColumnActionCreatorFailureType = {
     type: ActionTypes.RENAME_COLUMN_FAILURE,
-    payload: failureType
+    payload: FailureType
 }
 
 
 export type UnionOfActionsCreatorsType =
-    getDataFromStorageActionCreatorStartType
+    GetDataFromStorageActionCreatorStartType
     |
-    getDataFromStorageActionCreatorSuccessType
+    GetDataFromStorageActionCreatorSuccessType
     |
-    getDataFromStorageActionCreatorFailureType
+    GetDataFromStorageActionCreatorFailureType
     |
-    addColumnActionCreatorStartType
+    AddColumnActionCreatorStartType
     |
-    addColumnActionCreatorSuccessType
+    AddColumnActionCreatorSuccessType
     |
-    addColumnActionCreatorFailureType
+    AddColumnActionCreatorFailureType
     |
-    addCardActionCreatorStartType
+    AddCardActionCreatorStartType
     |
-    addCardActionCreatorSuccessType
+    AddCardActionCreatorSuccessType
     |
-    addCardActionCreatorFailureType
+    AddCardActionCreatorFailureType
     |
-    updateCardPositionActionCreatorStartType
+    UpdateCardPositionActionCreatorStartType
     |
-    updateCardPositionActionCreatorSuccessType
+    UpdateCardPositionActionCreatorSuccessType
     |
-    updateCardPositionActionCreatorFailureType
+    UpdateCardPositionActionCreatorFailureType
     |
-    updateColumnPositionActionCreatorStartType
+    UpdateColumnPositionActionCreatorStartType
     |
-    updateColumnPositionActionCreatorSuccessType
+    UpdateColumnPositionActionCreatorSuccessType
     |
-    updateColumnPositionActionCreatorFailureType
+    UpdateColumnPositionActionCreatorFailureType
     |
-    deleteColumnActionCreatorStartType
+    DeleteColumnActionCreatorStartType
     |
-    deleteColumnActionCreatorSuccessType
+    DeleteColumnActionCreatorSuccessType
     |
-    deleteColumnActionCreatorFailureType
+    DeleteColumnActionCreatorFailureType
     |
-    deleteCardActionCreatorStartType
+    DeleteCardActionCreatorStartType
     |
-    deleteCardActionCreatorSuccessType
+    DeleteCardActionCreatorSuccessType
     |
-    deleteCardActionCreatorFailureType
+    DeleteCardActionCreatorFailureType
     |
-    renameCardActionCreatorStartType
+    RenameCardActionCreatorStartType
     |
-    renameCardActionCreatorSuccessType
+    RenameCardActionCreatorSuccessType
     |
-    renameCardActionCreatorFailureType
+    RenameCardActionCreatorFailureType
     |
-    renameColumnActionCreatorStartType
+    RenameColumnActionCreatorStartType
     |
-    renameColumnActionCreatorSuccessType
+    RenameColumnActionCreatorSuccessType
     |
-    renameColumnActionCreatorFailureType
+    RenameColumnActionCreatorFailureType
 
 
 

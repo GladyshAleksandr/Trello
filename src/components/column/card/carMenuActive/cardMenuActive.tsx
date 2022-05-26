@@ -1,8 +1,8 @@
 import { useState, useRef, RefObject, useEffect } from "react"
-import { useSelector, useDispatch } from "react-redux"
-import { actions } from "../../../../Redux/actions/actionsCreators"
-import { AppStateType } from "../../../../Redux/store/store"
-import { changeCardOrderToIndexOfColumn } from "../../../../Redux/utils/utils"
+import { useDispatch } from "react-redux"
+import { actions } from "Redux/actions/actionsCreators"
+import { getColumnsSelector } from "Redux/selectors/columnsSelectors"
+import { changeCardOrderToIndexOfColumn } from "Redux/utils/utils"
 
 type CardMenuActivePropsType = {
     order: number
@@ -15,17 +15,7 @@ const CardMenuActive: React.FC<CardMenuActivePropsType> = ({ handleSetIsCardMenu
     const [cardText, setCardText] = useState(text)
     const inputREf = useRef() as RefObject<HTMLDivElement>
 
-
-    const stateData = useSelector((store: AppStateType) => store.columns)
-
-    let columns1 = stateData.map((column) => {
-        let ob = Object.assign({}, column)
-        ob.cards = ob.cards.map((card) => {
-            return Object.assign({}, card)
-        })
-        return ob
-    })
-
+    const stateData = getColumnsSelector()
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -40,15 +30,10 @@ const CardMenuActive: React.FC<CardMenuActivePropsType> = ({ handleSetIsCardMenu
     }, [inputREf])
 
     function handleDelete() {
-        columns1.map((column) => {
-            column.cards.forEach((value: CardsType, key) => {
-                if (value.id === id) column.cards.splice(key, 1)
-            })
-            return column
-        })
+        const columns = stateData.map((column) => ({ ...column, cards: column.cards.filter((card) => card.id !== id) }))
 
-        changeCardOrderToIndexOfColumn(columns1)
-        dispatch(actions.deleteCardActionCreatorStart(columns1))
+        const arrToDispatch = changeCardOrderToIndexOfColumn(columns)
+        dispatch(actions.deleteCardActionCreatorStart(arrToDispatch))
         handleSetIsCardMenuActive()
     }
 

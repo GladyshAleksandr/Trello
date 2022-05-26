@@ -1,24 +1,15 @@
 import Column from './components/column/column';
 import './App.scss'
-import { useDispatch, useSelector } from 'react-redux';
-import { AppStateType } from './Redux/store/store';
+import { useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { actions } from './Redux/actions/actionsCreators';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import { getIdForNewCard } from './Redux/utils/utils';
+import { getBiggestColumnIdFromStore, getIdForNewCard } from './Redux/utils/utils';
+import { getColumnsSelector } from './Redux/selectors/columnsSelectors';
 
 
 const App = () => {
-  const stateData = useSelector((store: AppStateType) => store.columns)
-
-  const columns = stateData.map((column) => {
-    let ob = Object.assign({}, column)
-    ob.cards = ob.cards.map((card) => {
-      return Object.assign({}, card)
-    })
-    return ob
-  })
-
+  const columns = getColumnsSelector()
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -35,9 +26,9 @@ const App = () => {
 
   function handleClick() {
     setOpen(!isColumnAreaOpen)
-
+    const biggestColumnId = getBiggestColumnIdFromStore(columns)
     if (titleFromColumn.match(/[^\s]/)) {
-      dispatch(actions.addColumnActionCreatorStart(columns.length + 1, titleFromColumn, columns.length + 1))
+      dispatch(actions.addColumnActionCreatorStart(biggestColumnId + 1, titleFromColumn, columns.length + 1))
       setText('')
     }
   }
@@ -48,92 +39,101 @@ const App = () => {
     if (!destination) return
 
     if (type === 'column') {
-      const SortedArr = columns
-      SortedArr.map((col) => {
-        if (source.index > destination.index) {
-          if (col.columnId >= destination.index + 1)
-            col.columnId += 1
+
+      const arrToDispatch: Array<ColumnsTypes> = columns.map((col) => {
+        if (source.index > destination.index && col.columnId >= destination.index + 1) {
+          col.columnId += 1
         }
 
-        if (source.index < destination.index) {
-          if (col.columnId <= destination.index + 1)
-            col.columnId -= 1
+        if (source.index < destination.index && col.columnId <= destination.index + 1) {
+          col.columnId -= 1
         }
-        return col
+        return { ...col }
       })
-      SortedArr[source.index].columnId = destination.index + 1
-      SortedArr.sort((a, b) => a.columnId - b.columnId)
-      SortedArr.map((col, index) => {
-        col.columnId = index + 1
-        col.cards.map((card) => {
-          card.columnId = col.columnId
+        .map((column, index) => index === source.index ? { ...column, columnId: destination.index + 1 } : column)
+        .sort((a: ColumnsTypes, b: ColumnsTypes) => a.columnId - b.columnId)
+        .map((col: ColumnsTypes, index) => {
+          return {
+            ...col,
+            columnId: index + 1,
+            cards:
+              col.cards.map((card: CardsType) => {
+                return {
+                  ...card,
+                  columnId: col.columnId
+                }
+              })
+          }
         })
-        return col
-      })
-      dispatch(actions.updateColumnPositionActionCreatorStart(SortedArr))
+      dispatch(actions.updateColumnPositionActionCreatorStart(arrToDispatch))
       return
     }
 
-    const sourceColumns = columns[source.droppableId - 1]
+    const columnsCopy = columns.map((column) => {
+      return {
+        ...column,
+        cards: column.cards.map((card) => ({ ...card }))
+      }
+    })
+    const sourceColumns = columnsCopy[source.droppableId - 1]
+
+
+
     //destination.index = куда ложат карту source.index откуда ложат карту
     if (source.droppableId === destination.droppableId) {
+      let sortedAr
 
       if (source.index === destination.index) return
-      else if (source.index > destination.index) {
-        let sortedAr = sourceColumns.cards.map((card) => {
+
+      if (source.index > destination.index) {
+        sortedAr = sourceColumns.cards.map((card) => {
           let tmpDest = destination.index
           if (card.order >= (++tmpDest)) {
-            card.order += 1
-            return card
+            return {
+              ...card,
+              order: card.order + 1
+            }
           }
           else return card
         }
         )
-        sortedAr[source.index].order = ++destination.index
-        sourceColumns.cards = sortedAr
-        sortedAr.sort((a, b) => a.order - b.order)
-        columns[source.droppableId - 1] = sourceColumns
-        dispatch(actions.updateCardPositionActionCreatorStart(columns))
       }
       else if (source.index < destination.index) {
-        let sortedAr = sourceColumns.cards.map((card) => {
+        sortedAr = sourceColumns.cards.map((card) => {
           let tmpDest = destination.index
           if (card.order <= (++tmpDest)) {
-            card.order -= 1
-            return card
+            return {
+              ...card,
+              order: card.order - 1
+            }
           }
           else return card
         }
         )
-        sortedAr[source.index].order = ++destination.index
-        sourceColumns.cards = sortedAr
-        sortedAr.sort((a, b) => a.order - b.order)
 
-        columns[source.droppableId - 1] = sourceColumns
-        dispatch(actions.updateCardPositionActionCreatorStart(columns))
+      }
+      if (sortedAr) {
+        sortedAr[source.index].order = ++destination.index
+        sortedAr.sort((a, b) => a.order - b.order)
+        sourceColumns.cards = sortedAr
+        dispatch(actions.updateCardPositionActionCreatorStart(columnsCopy))
       }
     }
     else {
-      let cardToDrop = columns[source.droppableId - 1].cards.splice(source.index, 1)
-      columns[source.droppableId - 1].cards.forEach((card, index) => {
-        card.order = index + 1
-      })
+      const cardToDrop = columnsCopy[source.droppableId - 1].cards.splice(source.index, 1) // ? mutable need to change 
 
-
-      columns[destination.droppableId - 1].cards.forEach((card, index) => {
-        if (card.order >= destination.index + 1) {
-          card.order += 1
-        }
-      })
-      columns[destination.droppableId - 1].cards.splice(destination.index, 0, cardToDrop[0])
-      columns[destination.droppableId - 1].cards[destination.index].order = destination.index + 1
-      columns.map((col) => {
-        col.cards.map((card) => {
-          card.columnId = col.columnId
+      const arr: Array<ColumnsTypes> = columnsCopy.map((column, index) => index === source.droppableId - 1 ? { ...column, cards: column.cards.map((card, index) => ({ ...card, order: index + 1 })) } : column)
+        .map((column, index) => index === destination.droppableId - 1 ? { ...column, cards: column.cards.map((card) => card.order >= destination.index + 1 ? { ...card, order: card.order + 1 } : card) } : column)
+      arr[destination.droppableId - 1].cards.splice(destination.index, 0, cardToDrop[0])
+      const arrToDispatch = arr.map((column, index) => index === destination.droppableId - 1 ? { ...column, cards: column.cards.map((card, index) => index === destination.index ? { ...card, order: destination.index + 1 } : card) } : column)
+        .map((col) => {
+          return {
+            ...col,
+            cards: col.cards.map((card) => ({ ...card, columnId: col.columnId }))
+          }
         })
-        return col
-      })
-      dispatch(actions.updateCardPositionActionCreatorStart(columns))
+
+      dispatch(actions.updateCardPositionActionCreatorStart(arrToDispatch))
     }
   }
 

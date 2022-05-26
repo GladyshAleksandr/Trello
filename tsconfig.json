@@ -1,5 +1,17 @@
 {
   "compilerOptions": {
+    "baseUrl": "src",
+    "paths": {
+      "@utils/*": [
+        "src/Redux/utils/*"
+      ],
+      "@store/*": [
+        "src/Redux/store/*"
+      ],
+      "@actions/*": [
+        "src/Redux/actions/*"
+      ]
+    },
     "target": "es5",
     "lib": [
       "dom",
@@ -22,5 +34,5 @@
   },
   "include": [
     "src"
-  ]
+  ],
 }

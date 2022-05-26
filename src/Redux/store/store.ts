@@ -53,12 +53,7 @@ const columnsReducer = (state = initialState, action: ActionsType): InitialState
                 columns: action.payload.columns
             }
 
-        case ActionTypes.GET_DATA_FROM_STORAGE_FAILURE:
-            console.error(ActionTypes.GET_DATA_FROM_STORAGE_FAILURE)
 
-            return {
-                ...state
-            }
 
         case ActionTypes.ADD_COLUMN_SUCCESS:
             const newCol = {
@@ -72,47 +67,29 @@ const columnsReducer = (state = initialState, action: ActionsType): InitialState
                 columns: [...state.columns, newCol]
             }
 
-        case ActionTypes.ADD_COLUMN_FAILURE:
-            console.error(ActionTypes.ADD_COLUMN_FAILURE)
 
-            return {
-                ...state
-            }
 
         case ActionTypes.ADD_CARD_SUCCESS:
             return {
                 ...state,
-                /*                 ...state.columns[action.payload.card.columnId].cards = [...state.columns[action.payload.card.columnId].cards, action.payload.card],
-                 */
-                columns: [...state.columns.map((column) => {
+                columns: state.columns.map((column) => column.columnId !== action.payload.card.columnId ? column : { ...column, cards: [...column.cards, action.payload.card] })  /* [...state.columns.map((column) => {
                     if (column.columnId !== action.payload.card.columnId) return column
                     else {
                         column.cards.push(action.payload.card)
                         return column
                     }
-                })]
+                })] */
             }
-        case ActionTypes.ADD_CARD_FAILURE:
-            console.error(ActionTypes.ADD_CARD_FAILURE)
 
-            return {
-                ...state
-            }
+
 
         case ActionTypes.UPDATE_CARD_POSITION_SUCCESS:
-            console.log(action.payload.columns)
-
             return {
                 ...state,
                 columns: action.payload.columns
             }
 
-        case ActionTypes.UPDATE_CARD_POSITION_FAILURE:
-            console.error(ActionTypes.UPDATE_CARD_POSITION_FAILURE)
 
-            return {
-                ...state
-            }
 
         case ActionTypes.UPDATE_COLUMN_POSITION_SUCCESS:
             return {
@@ -120,24 +97,15 @@ const columnsReducer = (state = initialState, action: ActionsType): InitialState
                 columns: action.payload.columns
             }
 
-        case ActionTypes.UPDATE_COLUMN_POSITION_FAILURE:
-            console.error(ActionTypes.UPDATE_COLUMN_POSITION_FAILURE)
-            return {
-                ...state
-            }
+
 
         case ActionTypes.DELETE_COLUMN_SUCCESS:
-
             return {
                 ...state,
                 columns: action.payload.columns
             }
 
-        case ActionTypes.DELETE_COLUMN_FAILURE:
-            console.error(ActionTypes.DELETE_COLUMN_FAILURE)
-            return {
-                ...state
-            }
+
 
         case ActionTypes.DELETE_CARD_SUCESS:
             console.log(action.payload.columns)
@@ -146,32 +114,35 @@ const columnsReducer = (state = initialState, action: ActionsType): InitialState
                 columns: action.payload.columns
             }
 
-        case ActionTypes.DELETE_CARD_FAILURE:
-            console.error(ActionTypes.DELETE_CARD_FAILURE)
-            return {
-                ...state
-            }
+
 
         case ActionTypes.RENAME_CARD_SUCCESS:
             return {
                 ...state,
-                columns: [...state.columns.filter((column) => column.columnId === action.payload.columnId ? column.cards.map((card) => card.order === action.payload.order ? card.text = action.payload.text : card) : column)]
+                columns: state.columns.map((column) => column.columnId === action.payload.columnId ? { ...column, card: column.cards.map((card) => card.order === action.payload.order ? { ...card, text: action.payload.text } : card) } : column)
             }
 
-        case ActionTypes.RENAME_CARD_FAILURE:
-            console.error(ActionTypes.RENAME_CARD_FAILURE)
-            return {
-                ...state
-            }
+
 
         case ActionTypes.RENAME_COLUMN_SUCCESS:
             return {
                 ...state,
-                columns: [...state.columns.filter((column) => column.columnId === action.payload.columnId ? column.columnTitle = action.payload.columnTitle : column)]
+                columns: state.columns.map((column) => column.columnId === action.payload.columnId ? { ...column, columnTitle: action.payload.columnTitle } : column)
             }
 
+
+
         case ActionTypes.RENAME_COLUMN_FAILURE:
-            console.error(ActionTypes.RENAME_COLUMN_FAILURE)
+        case ActionTypes.RENAME_CARD_FAILURE:
+        case ActionTypes.DELETE_CARD_FAILURE:
+        case ActionTypes.DELETE_COLUMN_FAILURE:
+        case ActionTypes.UPDATE_COLUMN_POSITION_FAILURE:
+        case ActionTypes.UPDATE_CARD_POSITION_FAILURE:
+        case ActionTypes.ADD_CARD_FAILURE:
+        case ActionTypes.ADD_COLUMN_FAILURE:
+        case ActionTypes.GET_DATA_FROM_STORAGE_FAILURE:
+
+            console.error(action.type)
 
             return {
                 ...state

@@ -49,17 +49,16 @@ const Column: React.FC<PropsType> = ({ countOfCards, id, columnTitle, cards, ind
     }, [columnTitle]);
 
     function handleDeleteColumn() {
-        let tmpAr
-        tmpAr = columns.filter((col, index) => col.columnId !== id)
-        changeColumnAndCardIdToIndexOfColumn(tmpAr)
-        dispatch(actions.deleteColumnActionCreatorStart(tmpAr))
+        const tmpAr = columns.filter((col) => col.columnId !== id)
+        const arrToDispatch = changeColumnAndCardIdToIndexOfColumn(tmpAr)
+        debugger
+        dispatch(actions.deleteColumnActionCreatorStart(arrToDispatch))
     }
 
     function handleChangeColumnTitle(e: any) {
         if (e.target) {
             setColumnTitleTmp(e.target.value)
         }
-
     }
 
     function handleChange(e: any) {
@@ -85,7 +84,6 @@ const Column: React.FC<PropsType> = ({ countOfCards, id, columnTitle, cards, ind
                                 } onChange={handleChangeColumnTitle} value={columnTitleTmp} className="columnTitle">
                                 </input>
                             </form>
-
                             {inCollumnSettingsMenu === false
                                 ?
                                 <div ref={menuRef} className="columnSettings">...</div>
@@ -128,7 +126,6 @@ const Column: React.FC<PropsType> = ({ countOfCards, id, columnTitle, cards, ind
 
                                 : <button type="button" onClick={() => setOpen(!isCardAreaOpen)} className="addCardBtn">Add card</button>
                         }
-
                     </div>
                 </div >
             )}
