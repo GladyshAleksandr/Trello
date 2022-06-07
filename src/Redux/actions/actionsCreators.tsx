@@ -19,16 +19,16 @@ export const actions = {
     addColumnActionCreatorStart: (id: number, columnTitle: string, columnId: number): AddColumnActionCreatorStartType => ({
         type: ActionTypes.ADD_COLUMN_START, payload: { id, columnTitle, columnId }
     } as const),
-    addColumnActionCreatorSuccess: (columnTitle: string): AddColumnActionCreatorSuccessType => ({
-        type: ActionTypes.ADD_COLUMN_SUCCESS, payload: { columnTitle }
+    addColumnActionCreatorSuccess: (id: number, columnTitle: string): AddColumnActionCreatorSuccessType => ({
+        type: ActionTypes.ADD_COLUMN_SUCCESS, payload: { id, columnTitle }
     } as const),
     addColumnActionCreatorFailure: (err: Error): AddColumnActionCreatorFailureType => ({
         type: ActionTypes.ADD_COLUMN_FAILURE, payload: { err }
     } as const),
 
 
-    addCardActionCreatorStart: (id: number, text: string, columnId: number, order: number): AddCardActionCreatorStartType => ({
-        type: ActionTypes.ADD_CARD_START, payload: { id, text, columnId, order }
+    addCardActionCreatorStart: (id: number, text: string, columnId: number, _order: number): AddCardActionCreatorStartType => ({
+        type: ActionTypes.ADD_CARD_START, payload: { id, text, columnId, _order }
     } as const),
     addCardActionCreatorSuccess: (card: CardsType): AddCardActionCreatorSuccessType => ({
         type: ActionTypes.ADD_CARD_SUCCESS, payload: { card }
@@ -88,11 +88,11 @@ export const actions = {
 
 
 
-    renameCardActionCreatorStart: (text: string, columnId: number, order: number): RenameCardActionCreatorStartType => ({
-        type: ActionTypes.RENAME_CARD_START, payload: { text, columnId, order }
+    renameCardActionCreatorStart: (text: string, id: number): RenameCardActionCreatorStartType => ({
+        type: ActionTypes.RENAME_CARD_START, payload: { text, id }
     } as const),
-    renameCardActionCreatorSuccess: (text: string, columnId: number, order: number): RenameCardActionCreatorSuccessType => ({
-        type: ActionTypes.RENAME_CARD_SUCCESS, payload: { text, columnId, order }
+    renameCardActionCreatorSuccess: (text: string, id: number): RenameCardActionCreatorSuccessType => ({
+        type: ActionTypes.RENAME_CARD_SUCCESS, payload: { text, id }
     } as const),
     renameCardActionCreatorFailure: (err: Error): RenameCardActionCreatorFailureType => ({
         type: ActionTypes.RENAME_CARD_FAILURE, payload: { err }

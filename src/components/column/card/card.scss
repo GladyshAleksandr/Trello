@@ -26,7 +26,8 @@
     .changeCardBtnWrapper {
         position: relative;
         bottom: 35px;
-        left: 225px;
+        left: -5px;
+        top: 5px;
         width: 16px;
         height: 20px;
         z-index: 3;
@@ -70,7 +71,7 @@
             }
             .formButton {
                 font-size: 14px;
-                margin: 10px 0px;
+                margin: 10px 5px;
                 height: 25px;
                 width: 50%;
                 background-color: greenyellow;

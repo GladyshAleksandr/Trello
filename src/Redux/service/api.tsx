@@ -7,39 +7,39 @@ export const instance = axios.create({
 
 export const api = {
     getDataFromStore() {
-        return instance.get('/').then(res => res)
+        return instance.get('/columns').then(res => res)
     },
 
-    postAddCard(id: number, text: string, columnId: number, order: number) {
-        return instance.post('/add-card', {
+    postCard(id: number, text: string, columnId: number, _order: number) {
+        return instance.post('/cards', {
             id,
             text,
             columnId,
-            order
+            _order
         }).then(res => res)
     },
 
-    postAddColumn(columnTitle: string, columnId: number) {
-        return instance.post('/add-column', {
+    postColumn(columnTitle: string, columnId: number) {
+        return instance.post('/columns', {
             columnTitle,
             columnId
         }).then(res => res)
     },
 
-    postMoveColumn(columns: Array<ColumnsTypes>) {
-        return instance.post('/move-column', {
+    putColumns(columns: Array<ColumnsTypes>) {
+        return instance.put('/columns', {
             columns
         }).then(res => res)
     },
 
-    postMoveCard(columns: Array<ColumnsTypes>) {
-        return instance.post('/move-card', {
+    putCards(columns: Array<ColumnsTypes>) {
+        return instance.put('/cards', {
             columns
         }).then(res => res)
     },
 
     deleteCard(columns: Array<ColumnsTypes>) {
-        return instance.delete('/delete-card', {
+        return instance.delete('/card', {
             data:
             {
                 columns
@@ -48,7 +48,7 @@ export const api = {
     },
 
     deleteColumn(columns: Array<ColumnsTypes>) {
-        return instance.delete('/delete-column', {
+        return instance.delete('/column', {
             data:
             {
                 columns
@@ -56,18 +56,15 @@ export const api = {
         }).then(res => res)
     },
 
-    postRenameCard(text: string, columnId: number, order: number) {
-        return instance.post('/rename-card', {
-            text,
-            columnId,
-            order
+    patchRenameCard(text: string, id: number /* columnId: number, _order: number */) {
+        return instance.patch(`/cards/${id}`, {
+            text
         }).then(res => res)
     },
 
-    postRenameColumn(columnTitle: string, columnId: number) {
-        return instance.post('/rename-column', {
-            columnTitle,
-            columnId
+    patchRenameColumn(columnTitle: string, columnId: number) {
+        return instance.patch(`/columns/${columnId}`, {
+            columnTitle
         }).then(res => res)
     }
 

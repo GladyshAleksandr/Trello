@@ -24,15 +24,15 @@ function* workerGetDataFromStorage() {
 
 
 
-async function addCardToDB({ id, text, columnId, order }: Start_Success_Type.AddCardStartType) {
-    const res: AxiosResponse = await api.postAddCard(id, text, columnId, order)
+async function addCardToDB({ id, text, columnId, _order }: Start_Success_Type.AddCardStartType) {
+    const res: AxiosResponse = await api.postCard(id, text, columnId, _order)
     return res.data
 }
 
-function* workerSagaAddCard({ payload: { id, text, columnId, order } }: AddCardActionCreatorStartType) {
+function* workerSagaAddCard({ payload: { id, text, columnId, _order } }: AddCardActionCreatorStartType) {
     try {
-        const data: CardsType = yield call(addCardToDB, { id, text, columnId, order })
-        yield put(actions.addCardActionCreatorSuccess(data))
+       /*  const _id: number =  */yield call(addCardToDB, { id, text, columnId, _order })
+        yield put(actions.addCardActionCreatorSuccess({ id, text, columnId, _order }))
     } catch (error) {
         yield put(actions.addColumnActionCreatorFailure(error as Error))
     }
@@ -41,14 +41,14 @@ function* workerSagaAddCard({ payload: { id, text, columnId, order } }: AddCardA
 
 
 async function addColumnToDB({ columnTitle, columnId }: Start_Success_Type.AddColumnStartType) {
-    const res: AxiosResponse = await api.postAddColumn(columnTitle, columnId)
+    const res: AxiosResponse = await api.postColumn(columnTitle, columnId)
     return res
 }
 
 function* workerSagaAddColumn({ payload: { id, columnTitle, columnId } }: AddColumnActionCreatorStartType) {
     try {
-        yield call(addColumnToDB, { id, columnTitle, columnId })
-        yield put(actions.addColumnActionCreatorSuccess(columnTitle))
+       /*  const _id: number = */ yield call(addColumnToDB, { id, columnTitle, columnId })
+        yield put(actions.addColumnActionCreatorSuccess(id, columnTitle))
     } catch (error) {
         yield put(actions.addColumnActionCreatorFailure(error as Error))
     }
@@ -58,15 +58,16 @@ function* workerSagaAddColumn({ payload: { id, columnTitle, columnId } }: AddCol
 
 
 async function moveColumnToDB({ columns }: Start_Success_Type.UpdateColumnPositionStartType) {
-    let res: AxiosResponse = await api.postMoveColumn(columns)
+    let res: AxiosResponse = await api.putColumns(columns)
     return res
 
 }
 
 function* workerSagamoveColumn({ payload: { columns } }: UpdateColumnPositionActionCreatorStartType) {
     try {
-        yield call(moveColumnToDB, { columns })
-        yield put(actions.updateColumnPositionActionCreatorSuccess(columns))
+        const res: AxiosResponse = yield call(moveColumnToDB, { columns })
+        if (res.status === 200) yield put(actions.updateColumnPositionActionCreatorSuccess(columns))
+
     }
     catch (err) {
         yield put(actions.updateColumnPositionActionCreatorFailure(err as Error))
@@ -76,14 +77,14 @@ function* workerSagamoveColumn({ payload: { columns } }: UpdateColumnPositionAct
 
 
 async function moveCardToDB({ columns }: Start_Success_Type.UpdateCardPositionStartType) {
-    const res: AxiosResponse = await api.postMoveCard(columns)
+    const res: AxiosResponse = await api.putCards(columns)
     return res
 
 }
 
 function* workerSagaMoveCard({ payload: { columns } }: UpdateCardPositionActionCreatorStartType) {
     try {
-        yield call(moveCardToDB, { columns })
+        const res: AxiosResponse = yield call(moveCardToDB, { columns })
         yield put(actions.updateCardPositionActionCreatorSuccess(columns))
     } catch (error) {
         yield put(actions.updateCardPositionActionCreatorFailure(error as Error))
@@ -125,7 +126,7 @@ function* workerSagaDeleteCard({ payload: { columns } }: DeleteCardActionCreator
 
 
 async function renameColumnToDB({ columnTitle, columnId }: Start_Success_Type.RenameColumnStartType) {
-    const res: AxiosResponse = await api.postRenameColumn(columnTitle, columnId)
+    const res: AxiosResponse = await api.patchRenameColumn(columnTitle, columnId)
     return res
 }
 
@@ -140,15 +141,15 @@ function* workerSagaRenameColumn({ payload: { columnTitle, columnId } }: RenameC
 
 
 
-async function renameCardToDB({ text, columnId, order }: Start_Success_Type.RenameCardStartType) {
-    const res: AxiosResponse = await api.postRenameCard(text, columnId, order)
+async function renameCardToDB({ text, id }: Start_Success_Type.RenameCardStartType) {
+    const res: AxiosResponse = await api.patchRenameCard(text, id)
     return res
 }
 
-function* workerSagaRenameCard({ payload: { text, columnId, order } }: RenameCardActionCreatorStartType) {
+function* workerSagaRenameCard({ payload: { text, id } }: RenameCardActionCreatorStartType) {
     try {
-        yield call(renameCardToDB, { text, columnId, order })
-        yield put(actions.renameCardActionCreatorSuccess(text, columnId, order))
+        yield call(renameCardToDB, { text, id })
+        yield put(actions.renameCardActionCreatorSuccess(text, id))
     } catch (error) {
         yield put(actions.renameCardActionCreatorFailure(error as Error))
     }

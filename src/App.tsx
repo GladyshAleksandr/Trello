@@ -3,13 +3,15 @@ import './App.scss'
 import { useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { actions } from './Redux/actions/actionsCreators';
-import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { getBiggestColumnIdFromStore, getIdForNewCard } from './Redux/utils/utils';
 import { getColumnsSelector } from './Redux/selectors/columnsSelectors';
+import { useSelector } from 'react-redux';
+import ColumnAreaOpen from 'columnAreaOpen';
 
 
 const App = () => {
-  const columns = getColumnsSelector()
+  const columns = useSelector(getColumnsSelector)
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -20,7 +22,7 @@ const App = () => {
   const [isColumnAreaOpen, setOpen] = useState(false)
   const [titleFromColumn, setText] = useState('')
 
-  function handleChange(e: any) {
+  function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     setText(e.target.value)
   }
 
@@ -33,24 +35,27 @@ const App = () => {
     }
   }
 
-  const onDragEnd = (result: any) => {
+  const onDragEnd = (result: DropResult) => {
     const { destination, source, draggableId, type } = result
 
     if (!destination) return
 
     if (type === 'column') {
 
-      const arrToDispatch: Array<ColumnsTypes> = columns.map((col) => {
-        if (source.index > destination.index && col.columnId >= destination.index + 1) {
-          col.columnId += 1
-        }
+      const arrToDispatch: Array<ColumnsTypes> = columns.map((col, index) => {
+        let tmpColId
 
-        if (source.index < destination.index && col.columnId <= destination.index + 1) {
-          col.columnId -= 1
-        }
-        return { ...col }
+        if (source.index > destination.index && col.columnId >= destination.index + 1) tmpColId = col.columnId + 1
+
+        if (source.index < destination.index && col.columnId <= destination.index + 1) tmpColId = col.columnId - 1
+
+        if (index === source.index) tmpColId = tmpColId = destination.index + 1
+
+        if (tmpColId) return { ...col, columnId: tmpColId }
+
+        return col
+
       })
-        .map((column, index) => index === source.index ? { ...column, columnId: destination.index + 1 } : column)
         .sort((a: ColumnsTypes, b: ColumnsTypes) => a.columnId - b.columnId)
         .map((col: ColumnsTypes, index) => {
           return {
@@ -75,7 +80,7 @@ const App = () => {
         cards: column.cards.map((card) => ({ ...card }))
       }
     })
-    const sourceColumns = columnsCopy[source.droppableId - 1]
+    const sourceColumns = columnsCopy[+source.droppableId - 1]
 
 
 
@@ -88,10 +93,10 @@ const App = () => {
       if (source.index > destination.index) {
         sortedAr = sourceColumns.cards.map((card) => {
           let tmpDest = destination.index
-          if (card.order >= (++tmpDest)) {
+          if (card._order >= (++tmpDest)) {
             return {
               ...card,
-              order: card.order + 1
+              _order: card._order + 1
             }
           }
           else return card
@@ -101,10 +106,10 @@ const App = () => {
       else if (source.index < destination.index) {
         sortedAr = sourceColumns.cards.map((card) => {
           let tmpDest = destination.index
-          if (card.order <= (++tmpDest)) {
+          if (card._order <= (++tmpDest)) {
             return {
               ...card,
-              order: card.order - 1
+              _order: card._order - 1
             }
           }
           else return card
@@ -113,19 +118,19 @@ const App = () => {
 
       }
       if (sortedAr) {
-        sortedAr[source.index].order = ++destination.index
-        sortedAr.sort((a, b) => a.order - b.order)
+        sortedAr[source.index]._order = ++destination.index
+        sortedAr.sort((a, b) => a._order - b._order)
         sourceColumns.cards = sortedAr
         dispatch(actions.updateCardPositionActionCreatorStart(columnsCopy))
       }
     }
     else {
-      const cardToDrop = columnsCopy[source.droppableId - 1].cards.splice(source.index, 1) // ? mutable need to change 
+      const cardToDrop = columnsCopy[+source.droppableId - 1].cards.splice(source.index, 1)
 
-      const arr: Array<ColumnsTypes> = columnsCopy.map((column, index) => index === source.droppableId - 1 ? { ...column, cards: column.cards.map((card, index) => ({ ...card, order: index + 1 })) } : column)
-        .map((column, index) => index === destination.droppableId - 1 ? { ...column, cards: column.cards.map((card) => card.order >= destination.index + 1 ? { ...card, order: card.order + 1 } : card) } : column)
-      arr[destination.droppableId - 1].cards.splice(destination.index, 0, cardToDrop[0])
-      const arrToDispatch = arr.map((column, index) => index === destination.droppableId - 1 ? { ...column, cards: column.cards.map((card, index) => index === destination.index ? { ...card, order: destination.index + 1 } : card) } : column)
+      const arr: Array<ColumnsTypes> = columnsCopy.map((column, index) => index === +source.droppableId - 1 ? { ...column, cards: column.cards.map((card, index) => ({ ...card, _order: index + 1 })) } : column)
+        .map((column, index) => index === +destination.droppableId - 1 ? { ...column, cards: column.cards.map((card) => card._order >= destination.index + 1 ? { ...card, _order: card._order + 1 } : card) } : column)
+      arr[+destination.droppableId - 1].cards.splice(destination.index, 0, cardToDrop[0])
+      const arrToDispatch = arr.map((column, index) => index === +destination.droppableId - 1 ? { ...column, cards: column.cards.map((card, index) => index === destination.index ? { ...card, _order: destination.index + 1 } : card) } : column)
         .map((col) => {
           return {
             ...col,
@@ -136,6 +141,11 @@ const App = () => {
       dispatch(actions.updateCardPositionActionCreatorStart(arrToDispatch))
     }
   }
+
+  function setColumnAreaOpen() {
+    setOpen(!isColumnAreaOpen)
+  }
+
 
   let idForNewCard = getIdForNewCard(columns)
 
@@ -148,20 +158,21 @@ const App = () => {
             {
               columns.map((obj, index) => {
                 return (
-                  <Column countOfCards={idForNewCard} index={index} key={obj.columnId} id={obj.columnId} columnTitle={obj.columnTitle} cards={obj.cards} />
+                  <Column idForNewCard={idForNewCard} index={index} key={obj.columnId} id={obj.columnId} columnTitle={obj.columnTitle} cards={obj.cards} />
                 )
               })
             }
             <div className="addColumnWrapper">
               {
                 isColumnAreaOpen ?
-                  <div>
-                    <form>
-                      <textarea onChange={handleChange} className="addColumnTextArea" placeholder="Enter the title of this column" ></textarea>
-                      <button type="button" onClick={handleClick} className="addColumn">Add new column</button>
-                      <img onClick={() => setOpen(!isColumnAreaOpen)} className="cancelColIcon" src="images/cancelIcon.png"></img>
-                    </form>
-                  </div>
+                  /*   <div>
+                      <form>
+                        <textarea onChange={handleChange} className="addColumnTextArea" placeholder="Enter the title of this column" ></textarea>
+                        <button type="button" onClick={handleClick} className="addColumn">Add new column</button>
+                        <img onClick={() => setOpen(!isColumnAreaOpen)} className="cancelColIcon" src="images/cancelIcon.png"></img>
+                      </form>
+                    </div> */
+                  <ColumnAreaOpen handleChange={handleChange} handleClick={handleClick} setColumnAreaOpen={setColumnAreaOpen} />
                   : <button type="button" onClick={() => setOpen(!isColumnAreaOpen)} className="addColumn">Add new column</button>
               }
             </div>

@@ -2,7 +2,7 @@ type ColumnsGetType = {
     id: number, columnTitle: string, columnId: number
 }
 type CardsGetType = {
-    id: number, text: string, columnId: number, orders: number
+    id: number, text: string, columnId: number, _order: number
 }
 type ResponseGetDataFromDBType = {
     columns: Array<columnsGetType>
@@ -13,7 +13,7 @@ type CardsType =
         id: number
         text: string
         columnId: number
-        order: number
+        _order: number
     }
 
 type ColumnsTypes =
@@ -41,6 +41,7 @@ namespace Start_Success_Type {
         columnId: number
     }
     type AddColumnSuccessType = {
+        id: number
         columnTitle: string
     }
 
@@ -50,7 +51,7 @@ namespace Start_Success_Type {
         id: number
         text: string
         columnId: number
-        order: number
+        _order: number
     }
 
     type AddCardSuccessType = {
@@ -88,8 +89,9 @@ namespace Start_Success_Type {
 
     type RenameCardStartType = {
         text: string
-        columnId: number
-        order: number
+        id: number
+        /*  columnId: number
+         _order: number */
     }
     type RenameCardSuccessType = RenameCardStartType
 

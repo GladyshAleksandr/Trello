@@ -6,21 +6,22 @@ import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 import { actions } from "../../Redux/actions/actionsCreators";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import { changeColumnAndCardIdToIndexOfColumn } from "../../Redux/utils/utils";
+import ColumnSettingsActive from "./components/columnSettingsActive";
 
 
 
 type PropsType = {
-    countOfCards: number
+    idForNewCard: number
     id: number
     columnTitle: string
     cards: Array<CardsType>
     index: number
 }
 
-const Column: React.FC<PropsType> = ({ countOfCards, id, columnTitle, cards, index }) => {
+const Column: React.FC<PropsType> = ({ idForNewCard, id, columnTitle, cards, index }) => {
     const columns = useSelector((store: AppStateType) => store.columns)
 
-    const menuRef = useRef() as MutableRefObject<HTMLDivElement>
+    const menuRef = useRef<HTMLDivElement>(null)
 
     const [isCardAreaOpen, setOpen] = useState(false)
     const [textFromCard, setText] = useState('')
@@ -30,7 +31,7 @@ const Column: React.FC<PropsType> = ({ countOfCards, id, columnTitle, cards, ind
 
     useEffect(() => {
 
-        const onClick = (e: any) => {
+        const onClick = (e: MouseEvent) => {
             if (menuRef.current === e.target) setColumnSettingsMenu(!inCollumnSettingsMenu)
 
             else {
@@ -51,17 +52,16 @@ const Column: React.FC<PropsType> = ({ countOfCards, id, columnTitle, cards, ind
     function handleDeleteColumn() {
         const tmpAr = columns.filter((col) => col.columnId !== id)
         const arrToDispatch = changeColumnAndCardIdToIndexOfColumn(tmpAr)
-        debugger
         dispatch(actions.deleteColumnActionCreatorStart(arrToDispatch))
     }
 
-    function handleChangeColumnTitle(e: any) {
+    function handleChangeColumnTitle(e: React.ChangeEvent<HTMLInputElement>) {
         if (e.target) {
             setColumnTitleTmp(e.target.value)
         }
     }
 
-    function handleChange(e: any) {
+    function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
         setText(e.target.value)
     }
 
@@ -69,9 +69,13 @@ const Column: React.FC<PropsType> = ({ countOfCards, id, columnTitle, cards, ind
         setOpen(!isCardAreaOpen)
 
         if (textFromCard.match(/[^\s]/)) {
-            dispatch(actions.addCardActionCreatorStart(countOfCards, textFromCard, id, cards.length + 1))
+            dispatch(actions.addCardActionCreatorStart(idForNewCard, textFromCard, id, cards.length + 1))
             setText('')
         }
+    }
+
+    function handleRenameColumn() {
+        dispatch(actions.renameColumnActionCreatorStart(columnTitleTmp, id))
     }
     return (
         <Draggable draggableId={id.toString()} index={index}>
@@ -80,21 +84,15 @@ const Column: React.FC<PropsType> = ({ countOfCards, id, columnTitle, cards, ind
                     <div {...provided.dragHandleProps} className="column">
                         <div className="upperColumnMenu">
                             <form>
-                                <input type='text' onBlur={() => dispatch(actions.renameColumnActionCreatorStart(columnTitleTmp, id))
-                                } onChange={handleChangeColumnTitle} value={columnTitleTmp} className="columnTitle">
+                                <input type='text' onBlur={handleRenameColumn}
+                                    onChange={handleChangeColumnTitle} value={columnTitleTmp} className="columnTitle">
                                 </input>
                             </form>
                             {inCollumnSettingsMenu === false
                                 ?
                                 <div ref={menuRef} className="columnSettings">...</div>
                                 :
-                                <div ref={menuRef} className="columnSettings__clicked">...
-                                    <ul >
-                                        <li className="TitleOfListLi">Actions with column</li>
-                                        <hr></hr>
-                                        <li onClick={handleDeleteColumn} >delete column</li>
-                                    </ul>
-                                </div>
+                                <ColumnSettingsActive menuRef={menuRef} handleDeleteColumn={handleDeleteColumn} />
                             }
                         </div>
                         <div className='Wrap'>
@@ -105,7 +103,7 @@ const Column: React.FC<PropsType> = ({ countOfCards, id, columnTitle, cards, ind
                                         {
                                             cards.map((item, index) => {
                                                 return (
-                                                    <Card order={item.order} columnId={id} id={item.id} key={item.id} text={item.text} index={index} />
+                                                    <Card _order={item._order} columnId={id} id={item.id} key={item.id} text={item.text} index={index} />
                                                 )
                                             })
                                         }

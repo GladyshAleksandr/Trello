@@ -1,26 +1,27 @@
-import { useState, useRef, RefObject, useEffect } from "react"
+import React, { useState, useRef, RefObject, useEffect, ChangeEvent } from "react"
+import { useSelector } from "react-redux"
 import { useDispatch } from "react-redux"
 import { actions } from "Redux/actions/actionsCreators"
 import { getColumnsSelector } from "Redux/selectors/columnsSelectors"
 import { changeCardOrderToIndexOfColumn } from "Redux/utils/utils"
 
 type CardMenuActivePropsType = {
-    order: number
+    _order: number
     id: number
     text: string
     columnId: number
     handleSetIsCardMenuActive: () => void
 }
-const CardMenuActive: React.FC<CardMenuActivePropsType> = ({ handleSetIsCardMenuActive, order, text, columnId, id }) => {
+const CardMenuActive: React.FC<CardMenuActivePropsType> = ({ handleSetIsCardMenuActive, _order, text, columnId, id }) => {
     const [cardText, setCardText] = useState(text)
-    const inputREf = useRef() as RefObject<HTMLDivElement>
+    const inputREf = useRef<HTMLDivElement>(null)
 
-    const stateData = getColumnsSelector()
+    const stateData = useSelector(getColumnsSelector)
     const dispatch = useDispatch()
 
     useEffect(() => {
-        function handleClickOutside(event: any) {
-            if (inputREf.current && !inputREf.current.contains(event.target)) handleSetIsCardMenuActive()
+        function handleClickOutside(event: MouseEvent) {
+            if (inputREf.current && !inputREf.current.contains(event.target as Node)) handleSetIsCardMenuActive()
             return false
         }
         document.addEventListener("mousedown", handleClickOutside);
@@ -38,11 +39,11 @@ const CardMenuActive: React.FC<CardMenuActivePropsType> = ({ handleSetIsCardMenu
     }
 
     function dispatchRename() {
-        dispatch(actions.renameCardActionCreatorStart(cardText, columnId, order))
+        dispatch(actions.renameCardActionCreatorStart(cardText, id /* columnId, order */))
         handleSetIsCardMenuActive()
     }
 
-    function handleRename(e: any) {
+    function handleRename(e: React.ChangeEvent<HTMLTextAreaElement>) {
         if (e.target) {
             setCardText(e.target.value)
         }

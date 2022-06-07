@@ -1,6 +1,4 @@
-import store from '../store/store';
+import { AppStateType } from './../store/store';
 
 
-export const getColumnsSelector = () => {
-    return store.getState().columns
-}
+export const getColumnsSelector = ({ columns }: AppStateType) => columns

@@ -11,15 +11,15 @@ export function convertDataFromDbToColumnsTypeData(data: ResponseGetDataFromDBTy
 
     const obj: any = objCols.map((current: any) => {
         const ColumnsTypes = {
-            id: undefined,
-            columnId: undefined,
-            columnTitle: undefined,
+            id: current.id,
+            columnId: current.columnId,
+            columnTitle: current.columnTitle,
             cards: []
         }
-        ColumnsTypes.id = current.id
-        ColumnsTypes.columnId = current.columnId
-        ColumnsTypes.columnTitle = current.columnTitle
-        ColumnsTypes.cards = []
+        /*         ColumnsTypes.id = current.id
+                ColumnsTypes.columnId = current.columnId
+                ColumnsTypes.columnTitle = current.columnTitle
+                ColumnsTypes.cards = [] */
         return ColumnsTypes
     })
 
@@ -27,15 +27,15 @@ export function convertDataFromDbToColumnsTypeData(data: ResponseGetDataFromDBTy
         for (let i = 0; i < obj.length; ++i) {
             for (let j = 0; j < arrOfCards.length; ++j) {
                 const cardsType = {
-                    id: 0,
-                    text: '',
-                    columnId: 0,
-                    order: 0
+                    id: arrOfCards[j].id,
+                    text: arrOfCards[j].text,
+                    columnId: arrOfCards[j].columnId,
+                    _order: arrOfCards[j]._order
                 }
-                cardsType.id = arrOfCards[j].id
-                cardsType.text = arrOfCards[j].text
-                cardsType.columnId = arrOfCards[j].columnId
-                cardsType.order = arrOfCards[j].orders
+                /*     cardsType.id = arrOfCards[j].id
+                    cardsType.text = arrOfCards[j].text
+                    cardsType.columnId = arrOfCards[j].columnId
+                    cardsType._order = arrOfCards[j]._order */
 
                 if (obj[i].columnId === cardsType.columnId) {
                     obj[i].cards.push(cardsType)
@@ -44,7 +44,7 @@ export function convertDataFromDbToColumnsTypeData(data: ResponseGetDataFromDBTy
         }
     }
     const obToReturn = obj.map((column: ColumnsTypes) => {
-        column.cards.sort((a, b,) => a.order - b.order)
+        column.cards.sort((a, b,) => a._order - b._order)
         return column
     })
         .sort((a: ColumnsTypes, b: ColumnsTypes) => a.columnId - b.columnId)
@@ -63,12 +63,25 @@ export function changeColumnAndCardIdToIndexOfColumn(tmpAr: Array<ColumnsTypes>)
 }
 
 export function changeCardOrderToIndexOfColumn(tmpAr: Array<ColumnsTypes>) {
-    const arrToReturn = tmpAr.map((col) => ({ ...col, cards: col.cards.map((card, index) => ({ ...card, order: index + 1 })) }))
+    const arrToReturn = tmpAr.map((col) => ({ ...col, cards: col.cards.map((card, index) => ({ ...card, _order: index + 1 })) }))
     return arrToReturn
 }
 export const getIdForNewCard = (columns: Array<ColumnsTypes>) => {
-    const result = columns.reduce((prevCol, currentCol) => { return prevCol + currentCol.cards.length }, 0)
-    return result + START_CARD_ID
+    const tmpArr = columns.map((column) => {
+        column.cards.map((card) => {
+            const tmpObj = {
+                id: card.id,
+                text: card.text,
+                columnId: card.columnId,
+                _order: card._order
+            }
+            return tmpObj
+        })
+        return column.cards
+    })
+    const arrOfCardsRes = [].concat(...tmpArr as any)
+    const biggestId = Math.max(...arrOfCardsRes.map((ob: CardsType) => ob.id))
+    return biggestId + 1
 }
 
 export function getBiggestColumnIdFromStore(columns: Array<ColumnsTypes>) {

@@ -19,19 +19,19 @@ export type InitialStateType = typeof initialState
 const initialState = {
     columns: [
         {
-            id: 1, columnId: 1, columnTitle: 'Need to do', cards: [{ id: 100, text: 'Some text', columnId: 1, order: 1 },
-            { id: 101, text: 'Lorem ipsum', columnId: 1, order: 2 },
-            { id: 102, text: 'text...', columnId: 1, order: 3 },
-            { id: 103, text: 'Task 1', columnId: 1, order: 4 },
-            { id: 104, text: 'Task 2', columnId: 1, order: 5 },
+            id: 1, columnId: 1, columnTitle: 'Need to do', cards: [{ id: 100, text: 'Some text', columnId: 1, _order: 1 },
+            { id: 101, text: 'Lorem ipsum', columnId: 1, _order: 2 },
+            { id: 102, text: 'text...', columnId: 1, _order: 3 },
+            { id: 103, text: 'Task 1', columnId: 1, _order: 4 },
+            { id: 104, text: 'Task 2', columnId: 1, _order: 5 },
             ]
         },
         {
-            id: 2, columnId: 2, columnTitle: 'In process', cards: [{ id: 105, text: 'Igor', columnId: 1, order: 1 },
-            { id: 106, text: 'Task', columnId: 2, order: 2 }]
+            id: 2, columnId: 2, columnTitle: 'In process', cards: [{ id: 105, text: 'Igor', columnId: 1, _order: 1 },
+            { id: 106, text: 'Task', columnId: 2, _order: 2 }]
         },
         {
-            id: 3, columnId: 3, columnTitle: 'Done', cards: [{ id: 107, text: 'Important data', columnId: 3, order: 1 }]
+            id: 3, columnId: 3, columnTitle: 'Done', cards: [{ id: 107, text: 'Important data', columnId: 3, _order: 1 }]
         },
         {
             id: 4, columnId: 4, columnTitle: 'Test 4', cards: []
@@ -57,7 +57,7 @@ const columnsReducer = (state = initialState, action: ActionsType): InitialState
 
         case ActionTypes.ADD_COLUMN_SUCCESS:
             const newCol = {
-                id: state.columns.length + 1,
+                id: action.payload.id,
                 columnId: state.columns.length + 1,
                 columnTitle: action.payload.columnTitle,
                 cards: []
@@ -72,13 +72,7 @@ const columnsReducer = (state = initialState, action: ActionsType): InitialState
         case ActionTypes.ADD_CARD_SUCCESS:
             return {
                 ...state,
-                columns: state.columns.map((column) => column.columnId !== action.payload.card.columnId ? column : { ...column, cards: [...column.cards, action.payload.card] })  /* [...state.columns.map((column) => {
-                    if (column.columnId !== action.payload.card.columnId) return column
-                    else {
-                        column.cards.push(action.payload.card)
-                        return column
-                    }
-                })] */
+                columns: state.columns.map((column) => column.columnId !== action.payload.card.columnId ? column : { ...column, cards: [...column.cards, action.payload.card] })
             }
 
 
@@ -119,7 +113,7 @@ const columnsReducer = (state = initialState, action: ActionsType): InitialState
         case ActionTypes.RENAME_CARD_SUCCESS:
             return {
                 ...state,
-                columns: state.columns.map((column) => column.columnId === action.payload.columnId ? { ...column, card: column.cards.map((card) => card.order === action.payload.order ? { ...card, text: action.payload.text } : card) } : column)
+                columns: state.columns.map((column) => /* column.columnId === action.payload.columnId ? */({ ...column, card: column.cards.map((card) => card.id === action.payload.id ? { ...card, text: action.payload.text } : card) }) /* : column */)
             }
 
 
