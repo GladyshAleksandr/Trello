@@ -6,10 +6,17 @@
     border-radius: 3%;
     display: inline-block;
 }
-.test {
-    height: 1000px;
-    width: 600px;
-    background-color: aquamarine;
+
+%columnMenuTpl {
+    text-align: center;
+    position: relative;
+    color: gray;
+    display: inline-block;
+    height: 35px;
+    margin: 10px 10px 10px 28px;
+    font-size: 18px;
+    font-weight: 700;
+    width: 40px;
 }
 
 .columnWrapper {
@@ -17,7 +24,6 @@
     height: 100%;
     width: 280px;
     margin: 55px 15px;
-    overflow: hidden;
 
     .column {
         position: absolute;
@@ -27,10 +33,83 @@
         min-height: 80px;
         border-radius: 3%;
 
-        .columnTitle {
-            font-weight: 600;
-            margin: 15px 20px 15px 20px;
+        .upperColumnMenu {
+            display: flex;
+            height: 35px;
+
+            .columnTitle {
+                border: 0px solid black;
+                background-color: #ebecf0;
+
+                font-weight: 600;
+                margin: 15px 0px 15px 20px;
+            }
+
+            .columnTitle {
+                font-weight: 600;
+                margin: 15px 0px 15px 20px;
+            }
+            .columnSettings {
+                @extend %columnMenuTpl;
+            }
+
+            .columnSettings:hover {
+                transition: all 0.5s;
+                background-color: rgb(216, 216, 216);
+            }
+
+            .columnSettings__clicked {
+                @extend %columnMenuTpl;
+                z-index: 7;
+
+                ul {
+                    width: 250px;
+                    z-index: 1;
+                    position: absolute;
+                    background-color: white;
+                    border: 1px black solid;
+                    box-shadow: 1px 1px 10px;
+                    color: black;
+
+                    hr {
+                        width: 275px;
+                        margin: 10px -33px;
+                    }
+
+                    .TitleOfListLi {
+                        font-size: 18px;
+                        font-weight: 600;
+                        width: 250px;
+                    }
+
+                    .TitleOfListLi:hover {
+                        font-size: 18px;
+                        font-weight: 600;
+                        width: 250px;
+                        background-color: white;
+                    }
+
+                    li {
+                        width: 290px;
+                        list-style-type: none;
+                        font-size: 16px;
+                        font-weight: 400;
+                        margin: 10px -40px;
+                    }
+
+                    li:hover {
+                        /*   width: 100%;
+                        list-style-type: none;
+                        font-size: 16px;
+                        font-weight: 400;
+                        margin: 10px -20px; */
+                        transition: all 0.5s;
+                        background-color: silver;
+                    }
+                }
+            }
         }
+
         .addCardDataTextArea {
             margin: 10px;
             padding: 10px 10px 40px 10px;
@@ -62,8 +141,8 @@
         .cancelIcon:hover {
             width: 18px;
             height: 18px;
-            position: absolute;
-            bottom: 24px;
+            /*   position: absolute;
+            bottom: 24px; */
         }
 
         .addCardBtn:hover {
